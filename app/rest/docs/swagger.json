@@ -1,0 +1,137 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Check Pad Service.",
+        "title": "Check Pad Swagger API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Coding4u",
+            "email": "contato@coding4u.com.br"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/customers": {
+            "post": {
+                "description": "Router for create a new customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "create a new customer",
+                "operationId": "createCustomer",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.PostCustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers/{customer_id}": {
+            "get": {
+                "description": "Router for find a customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "find a customer",
+                "operationId": "findCustomer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "customer_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.Customer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "rest.Customer": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.HTTPResponse": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "any message"
+                }
+            }
+        },
+        "rest.PostCustomerResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
