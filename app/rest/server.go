@@ -42,6 +42,9 @@ func StartRestServer(pg *db.PostgreSQL, port int) {
 	{
 		v1.Post("/customers", restService.CreateCustomer)
 		v1.Get("/customers/:customer_id", restService.FindCustomer)
+
+		v1.Post("/places", restService.CreatePlace)
+		v1.Get("/places/:place_id", restService.FindPlace)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

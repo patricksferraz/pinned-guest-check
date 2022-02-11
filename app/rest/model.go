@@ -25,3 +25,11 @@ type PostCustomerResponse struct {
 type Customer struct {
 	Base `json:",inline"`
 }
+
+type PostPlaceResponse struct {
+	ID string `json:"id" binding:"uuid"`
+}
+
+type Place struct {
+	Base `json:",inline"`
+}
