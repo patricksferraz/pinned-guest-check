@@ -47,5 +47,5 @@ gen:
 	proto/protofiles/*.proto
 
 gtest:
-	go test $(VERBOSE) -cover -coverprofile coverage.out ./...
+	go test -v -cover -coverprofile coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
