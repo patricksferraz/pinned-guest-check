@@ -3,7 +3,7 @@ FROM golang:1.17-alpine AS builder
 WORKDIR /go/src
 ENV PATH="/go/bin:${PATH}"
 ENV GO111MODULE=on
-# ENV CGO_ENABLED=0
+ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
 
