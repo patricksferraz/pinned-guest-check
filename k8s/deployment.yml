@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: check-pad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: check-pad
+  template:
+    metadata:
+      labels:
+        app: check-pad
+    spec:
+      containers:
+      - name: check-pad
+        image: ghcr.io/c-4u/check-pad
+        ports:
+        - name: rest
+          containerPort: 8080
+        envFrom:
+          - secretRef:
+              name: check-pad-secret
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "50m"
+
+      imagePullSecrets:
+          - name: regsecret
