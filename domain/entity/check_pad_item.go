@@ -19,15 +19,16 @@ type CheckPadItem struct {
 	Name           *string            `json:"name" gorm:"column:name;not null" valid:"required"`
 	Quantity       *int               `json:"quantity" gorm:"column:quantity;not null" valid:"required"`
 	UnitPrice      *float64           `json:"unit_price" gorm:"column:unit_price;not null" valid:"required"`
-	Discount       *float64           `json:"discount" gorm:"column:discount;not null" valid:"-"`
+	Discount       *float64           `json:"discount,omitempty" gorm:"column:discount" valid:"-"`
+	TotalPrice     *float64           `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
 	FinalPrice     *float64           `json:"final_price" gorm:"column:final_price;not null" valid:"-"`
-	Note           *string            `json:"note" gorm:"column:note" valid:"-"`
-	Tags           []*string          `json:"tags" gorm:"-" valid:"-"`
+	Note           *string            `json:"note,omitempty" gorm:"column:note;type:varchar(255)" valid:"-"`
+	Tag            *string            `json:"tag" gorm:"column:tag;type:varchar(255)" valid:"-"`
 	CheckPadID     *string            `json:"check_pad_id" gorm:"column:check_pad_id;type:uuid;not null" valid:"uuid"`
 	CheckPad       *CheckPad          `json:"-" valid:"-"`
 }
 
-func NewCheckPadItem(name *string, quantity *int, unitPrice *float64, discount *float64, note *string, tags []*string, chekPad *CheckPad) (*CheckPadItem, error) {
+func NewCheckPadItem(name *string, quantity *int, unitPrice *float64, discount *float64, note, tag *string, checkPad *CheckPad) (*CheckPadItem, error) {
 	e := CheckPadItem{
 		Name:       name,
 		Status:     CHECK_PAD_ITEM_PENDING,
@@ -35,9 +36,9 @@ func NewCheckPadItem(name *string, quantity *int, unitPrice *float64, discount *
 		UnitPrice:  unitPrice,
 		Discount:   discount,
 		Note:       note,
-		Tags:       tags,
-		CheckPadID: chekPad.ID,
-		CheckPad:   chekPad,
+		Tag:        tag,
+		CheckPadID: checkPad.ID,
+		CheckPad:   checkPad,
 	}
 	e.ID = utils.PString(uuid.NewV4().String())
 	e.CreatedAt = utils.PTime(time.Now())
@@ -57,7 +58,8 @@ func (e *CheckPadItem) isValid() error {
 }
 
 func (e *CheckPadItem) processPrice() error {
-	e.FinalPrice = utils.PFloat64(*e.UnitPrice * float64(*e.Quantity))
+	e.TotalPrice = utils.PFloat64(*e.UnitPrice * float64(*e.Quantity))
+	e.FinalPrice = e.TotalPrice
 	if e.Discount != nil {
 		e.FinalPrice = utils.PFloat64(*e.FinalPrice - *e.Discount)
 	}

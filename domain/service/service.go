@@ -144,8 +144,63 @@ func (s *Service) CancelCheckPad(ctx context.Context, checkPadID, canceledReason
 	return nil
 }
 
-func (s *Service) CancelCheckPadItem(ctx context.Context, checkPadItemID, canceledReason *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadItemID)
+func (s *Service) PayCheckPad(ctx context.Context, checkPadID *string) error {
+	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPad.Pay(); err != nil {
+		return err
+	}
+
+	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) AddCheckPadItem(ctx context.Context, name *string, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, checkPadID *string) (*string, error) {
+	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+	if err != nil {
+		return nil, err
+	}
+
+	checkPadItem, err := entity.NewCheckPadItem(name, quantity, unitPrice, discount, note, tag, checkPad)
+	if err != nil {
+		return nil, err
+	}
+
+	err = checkPad.AddItem(checkPadItem)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.Repo.CreateCheckPadItem(ctx, checkPadItem)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.Repo.SaveCheckPad(ctx, checkPad)
+	if err != nil {
+		return nil, err
+	}
+
+	return checkPadItem.ID, nil
+}
+
+func (s *Service) FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error) {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+	if err != nil {
+		return nil, err
+	}
+
+	return checkPadItem, nil
+}
+
+func (s *Service) CancelCheckPadItem(ctx context.Context, checkPadID, checkPadItemID, canceledReason *string) error {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
 	if err != nil {
 		return err
 	}
@@ -161,8 +216,8 @@ func (s *Service) CancelCheckPadItem(ctx context.Context, checkPadItemID, cancel
 	return nil
 }
 
-func (s *Service) PrepareCheckPadItem(ctx context.Context, checkPadItemID, canceledReason *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadItemID)
+func (s *Service) PrepareCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
 	if err != nil {
 		return err
 	}
@@ -178,8 +233,8 @@ func (s *Service) PrepareCheckPadItem(ctx context.Context, checkPadItemID, cance
 	return nil
 }
 
-func (s *Service) ForwardCheckPadItem(ctx context.Context, checkPadItemID, canceledReason *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadItemID)
+func (s *Service) ForwardCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
 	if err != nil {
 		return err
 	}
@@ -195,8 +250,8 @@ func (s *Service) ForwardCheckPadItem(ctx context.Context, checkPadItemID, cance
 	return nil
 }
 
-func (s *Service) DeliverCheckPadItem(ctx context.Context, checkPadItemID, canceledReason *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadItemID)
+func (s *Service) DeliverCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
 	if err != nil {
 		return err
 	}

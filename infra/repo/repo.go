@@ -68,7 +68,7 @@ func (r *Repository) CreateCheckPad(ctx context.Context, checkPad *entity.CheckP
 
 func (r *Repository) FindCheckPad(ctx context.Context, checkPadID *string) (*entity.CheckPad, error) {
 	var e entity.CheckPad
-	r.Pg.Db.First(&e, "id = ?", *checkPadID)
+	r.Pg.Db.Preload("Items").First(&e, "id = ?", *checkPadID)
 
 	if e.ID == nil {
 		return nil, fmt.Errorf("no check pad found")
@@ -78,13 +78,19 @@ func (r *Repository) FindCheckPad(ctx context.Context, checkPadID *string) (*ent
 }
 
 func (r *Repository) SaveCheckPad(ctx context.Context, checkPad *entity.CheckPad) error {
+	// TODO: infinity loop when saving check pad with backoff Items
 	err := r.Pg.Db.Save(checkPad).Error
 	return err
 }
 
-func (r *Repository) FindCheckPadItem(ctx context.Context, checkPadItemID *string) (*entity.CheckPadItem, error) {
+func (r *Repository) CreateCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error {
+	err := r.Pg.Db.Create(checkPadItem).Error
+	return err
+}
+
+func (r *Repository) FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error) {
 	var e entity.CheckPadItem
-	r.Pg.Db.First(&e, "id = ?", *checkPadItemID)
+	r.Pg.Db.Preload("CheckPad").First(&e, "id = ? AND check_pad_id = ?", *checkPadItemID, *checkPadID)
 
 	if e.ID == nil {
 		return nil, fmt.Errorf("no check pad item found")

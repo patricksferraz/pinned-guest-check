@@ -15,17 +15,18 @@ func init() {
 
 type CheckPad struct {
 	Base           `json:",inline" valid:"-"`
-	TotalPrice     *float64        `json:"total_price" gorm:"column:total_price;not null" valid:"-"`
-	TotalDiscount  *float64        `json:"total_discount" gorm:"column:total_discount;not null" valid:"-"`
-	FinalPrice     *float64        `json:"final_price" gorm:"column:final_price;not null" valid:"-"`
+	TotalPrice     *float64        `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
+	TotalDiscount  *float64        `json:"total_discount,omitempty" gorm:"column:total_discount" valid:"-"`
+	FinalPrice     *float64        `json:"final_price,omitempty" gorm:"column:final_price" valid:"-"`
 	Status         CheckPadStatus  `json:"status" gorm:"column:status;not null" valid:"checkPadStatus"`
 	CanceledReason *string         `json:"canceled_reason,omitempty" gorm:"column:canceled_reason;type:varchar(255)" valid:"-"`
-	Local          *string         `json:"local" gorm:"column:local;type:varchar(255)" valid:"-"`
+	Local          *string         `json:"local" gorm:"column:local;type:varchar(255)" valid:"required"`
 	CustomerID     *string         `json:"customer_id" gorm:"column:customer_id;type:uuid;not null" valid:"uuid"`
 	Customer       *Customer       `json:"-" valid:"-"`
 	PlaceID        *string         `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place          `json:"-" valid:"-"`
 	Items          []*CheckPadItem `json:"-" gorm:"ForeignKey:CheckPadID" valid:"-"`
+	items          []*CheckPadItem `json:"-" gorm:"-" valid:"-"`
 }
 
 func NewCheckPad(local *string, customer *Customer, place *Place) (*CheckPad, error) {
@@ -58,16 +59,18 @@ func (e *CheckPad) processPrice() error {
 	var totalPrice float64
 	var totalDiscount float64
 
-	for _, i := range e.Items {
+	for _, i := range e.items {
 		if i.FinalPrice != nil {
-			totalPrice += *i.FinalPrice
+			totalPrice += *i.TotalPrice
 		}
 		if i.Discount != nil {
 			totalDiscount += *i.Discount
 		}
 	}
 
-	e.FinalPrice = utils.PFloat64(totalPrice - totalDiscount)
+	e.TotalPrice = &totalPrice
+	e.TotalDiscount = &totalDiscount
+	e.FinalPrice = utils.PFloat64(*e.TotalPrice - *e.TotalDiscount)
 	err := e.isValid()
 	return err
 }
@@ -118,11 +121,13 @@ func (e *CheckPad) Pay() error {
 }
 
 func (e *CheckPad) AddItem(checkPadItem *CheckPadItem) error {
-	if e.Status == CHECK_PAD_CANCELED || e.Status == CHECK_PAD_PAID || e.Status == CHECK_PAD_AWAITING_PAYMENT {
+	if e.Status != CHECK_PAD_OPENED {
 		return errors.New("the check pad cannot be changed")
 	}
 
-	e.Items = append(e.Items, checkPadItem)
+	// NOTE: change if multi check pad items are added
+	e.items = append(e.Items, checkPadItem)
+	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.processPrice()
 	return err
 }

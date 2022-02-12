@@ -19,6 +19,7 @@ type RepoInterface interface {
 	FindCheckPad(ctx context.Context, checkPadID *string) (*entity.CheckPad, error)
 	SaveCheckPad(ctx context.Context, checkPad *entity.CheckPad) error
 
-	FindCheckPadItem(ctx context.Context, checkPadItemID *string) (*entity.CheckPadItem, error)
+	CreateCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
+	FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error)
 	SaveCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
 }

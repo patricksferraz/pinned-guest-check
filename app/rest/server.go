@@ -40,11 +40,29 @@ func StartRestServer(pg *db.PostgreSQL, port int) {
 	v1 := api.Group("/v1")
 	v1.Get("/swagger/*", fiberSwagger.WrapHandler)
 	{
-		v1.Post("/customers", restService.CreateCustomer)
-		v1.Get("/customers/:customer_id", restService.FindCustomer)
+		customer := v1.Group("/customers")
+		customer.Post("", restService.CreateCustomer)
+		customer.Get("/:customer_id", restService.FindCustomer)
 
-		v1.Post("/places", restService.CreatePlace)
-		v1.Get("/places/:place_id", restService.FindPlace)
+		place := v1.Group("/places")
+		place.Post("", restService.CreatePlace)
+		place.Get("/:place_id", restService.FindPlace)
+
+		checkPad := v1.Group("/check-pads")
+		checkPad.Post("", restService.CreateCheckPad)
+		checkPad.Get("/:check_pad_id", restService.FindCheckPad)
+		checkPad.Post("/:check_pad_id/reopen", restService.ReopenCheckPad)
+		checkPad.Post("/:check_pad_id/wait-payment", restService.WaitPaymentCheckPad)
+		checkPad.Post("/:check_pad_id/cancel", restService.CancelCheckPad)
+		checkPad.Post("/:check_pad_id/pay", restService.PayCheckPad)
+
+		checkPadItem := checkPad.Group("/:check_pad_id/items")
+		checkPadItem.Post("", restService.AddCheckPadItem)
+		checkPadItem.Get("/:check_pad_item_id", restService.FindCheckPadItem)
+		checkPadItem.Post("/:check_pad_item_id/cancel", restService.CancelCheckPadItem)
+		checkPadItem.Post("/:check_pad_item_id/prepare", restService.PrepareCheckPadItem)
+		checkPadItem.Post("/:check_pad_item_id/forward", restService.ForwardCheckPadItem)
+		checkPadItem.Post("/:check_pad_item_id/deliver", restService.DeliverCheckPadItem)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

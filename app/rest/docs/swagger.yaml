@@ -1,5 +1,95 @@
 basePath: /api/v1
 definitions:
+  rest.AddCheckPadItemRequest:
+    properties:
+      discount:
+        type: number
+      name:
+        type: string
+      note:
+        type: string
+      quantity:
+        type: integer
+      tag:
+        type: string
+      unit_price:
+        type: number
+    type: object
+  rest.CancelCheckPadItemRequest:
+    properties:
+      canceled_reason:
+        type: string
+    type: object
+  rest.CancelCheckPadRequest:
+    properties:
+      canceled_reason:
+        type: string
+    type: object
+  rest.CheckPad:
+    properties:
+      canceled_reason:
+        type: string
+      created_at:
+        type: string
+      customer_id:
+        type: string
+      final_price:
+        type: number
+      id:
+        type: string
+      local:
+        type: string
+      place_id:
+        type: string
+      status:
+        type: integer
+      total_discount:
+        type: number
+      total_price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  rest.CheckPadItem:
+    properties:
+      canceled_reason:
+        type: string
+      check_pad_id:
+        type: string
+      created_at:
+        type: string
+      discount:
+        type: number
+      final_price:
+        type: number
+      id:
+        type: string
+      name:
+        type: string
+      note:
+        type: string
+      quantity:
+        type: integer
+      status:
+        type: integer
+      tag:
+        type: string
+      total_price:
+        type: number
+      unit_price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  rest.CreateCheckPadRequest:
+    properties:
+      customer_id:
+        type: string
+      local:
+        type: string
+      place_id:
+        type: string
+    type: object
   rest.Customer:
     properties:
       created_at:
@@ -15,6 +105,11 @@ definitions:
         example: any message
         type: string
     type: object
+  rest.IDResponse:
+    properties:
+      id:
+        type: string
+    type: object
   rest.Place:
     properties:
       created_at:
@@ -22,16 +117,6 @@ definitions:
       id:
         type: string
       updated_at:
-        type: string
-    type: object
-  rest.PostCustomerResponse:
-    properties:
-      id:
-        type: string
-    type: object
-  rest.PostPlaceResponse:
-    properties:
-      id:
         type: string
     type: object
 info:
@@ -43,6 +128,410 @@ info:
   title: Check Pad Swagger API
   version: "1.0"
 paths:
+  /check-pads:
+    post:
+      consumes:
+      - application/json
+      description: Router for create a new check pad
+      operationId: createCheckPad
+      parameters:
+      - description: JSON body for create a new check pad
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.CreateCheckPadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.IDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: create a new check pad
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find a check pad
+      operationId: findCheckPad
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.CheckPad'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: find a check pad
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Router for cancel a check pad
+      operationId: cancelCheckPad
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: JSON body for cancel a check pad
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.CancelCheckPadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: cancel a check pad
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items:
+    post:
+      consumes:
+      - application/json
+      description: Router for add a check pad item
+      operationId: addCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: JSON body for add a new check pad item
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.AddCheckPadItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.IDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: add a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items/{check_pad_item_id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find a check pad item
+      operationId: findCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: Check pad item ID
+        in: path
+        name: check_pad_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.CheckPadItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: find a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items/{check_pad_item_id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Router for cancel a check pad item
+      operationId: cancelCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: Check pad item ID
+        in: path
+        name: check_pad_item_id
+        required: true
+        type: string
+      - description: JSON body for cancel a check pad item
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.CancelCheckPadItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: cancel a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items/{check_pad_item_id}/deliver:
+    post:
+      consumes:
+      - application/json
+      description: Router for deliver a check pad item
+      operationId: deliverCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: Check pad item ID
+        in: path
+        name: check_pad_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: deliver a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items/{check_pad_item_id}/forward:
+    post:
+      consumes:
+      - application/json
+      description: Router for forward a check pad item
+      operationId: forwardCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: Check pad item ID
+        in: path
+        name: check_pad_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: forward a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/items/{check_pad_item_id}/prepare:
+    post:
+      consumes:
+      - application/json
+      description: Router for prepare a check pad item
+      operationId: prepareCheckPadItem
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      - description: Check pad item ID
+        in: path
+        name: check_pad_item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: prepare a check pad item
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/pay:
+    post:
+      consumes:
+      - application/json
+      description: Router for pay a check pad
+      operationId: payCheckPad
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: pay a check pad
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/reopen:
+    post:
+      consumes:
+      - application/json
+      description: Router for reopen a check pad
+      operationId: reopenCheckPad
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: reopen a check pad
+      tags:
+      - Check Pad
+  /check-pads/{check_pad_id}/wait-payment:
+    post:
+      consumes:
+      - application/json
+      description: Router for wait payment a check pad
+      operationId: waitPaymentCheckPad
+      parameters:
+      - description: Check pad ID
+        in: path
+        name: check_pad_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: wait payment a check pad
+      tags:
+      - Check Pad
   /customers:
     post:
       consumes:
@@ -55,7 +544,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.PostCustomerResponse'
+            $ref: '#/definitions/rest.IDResponse'
         "400":
           description: Bad Request
           schema:
@@ -109,7 +598,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.PostPlaceResponse'
+            $ref: '#/definitions/rest.IDResponse'
         "400":
           description: Bad Request
           schema:
