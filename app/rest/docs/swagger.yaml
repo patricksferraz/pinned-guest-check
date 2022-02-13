@@ -15,6 +15,15 @@ definitions:
       unit_price:
         type: number
     type: object
+  rest.Attendant:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+    type: object
   rest.CancelCheckPadItemRequest:
     properties:
       canceled_reason:
@@ -128,6 +137,60 @@ info:
   title: Check Pad Swagger API
   version: "1.0"
 paths:
+  /attendants:
+    post:
+      consumes:
+      - application/json
+      description: Router for create a new attendant
+      operationId: createAttendant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.IDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: create a new attendant
+      tags:
+      - Attendant
+  /attendants/{attendant_id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find a attendant
+      operationId: findAttendant
+      parameters:
+      - description: Attendant ID
+        in: path
+        name: attendant_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.Attendant'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: find a attendant
+      tags:
+      - Attendant
   /check-pads:
     post:
       consumes:

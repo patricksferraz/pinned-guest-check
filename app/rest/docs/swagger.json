@@ -12,6 +12,87 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/attendants": {
+            "post": {
+                "description": "Router for create a new attendant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attendant"
+                ],
+                "summary": "create a new attendant",
+                "operationId": "createAttendant",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.IDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/attendants/{attendant_id}": {
+            "get": {
+                "description": "Router for find a attendant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attendant"
+                ],
+                "summary": "find a attendant",
+                "operationId": "findAttendant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Attendant ID",
+                        "name": "attendant_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.Attendant"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/check-pads": {
             "post": {
                 "description": "Router for create a new check pad",
@@ -800,6 +881,20 @@
                 },
                 "unit_price": {
                     "type": "number"
+                }
+            }
+        },
+        "rest.Attendant": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
