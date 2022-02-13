@@ -103,3 +103,25 @@ func (r *Repository) SaveCheckPadItem(ctx context.Context, checkPadItem *entity.
 	err := r.Pg.Db.Save(checkPadItem).Error
 	return err
 }
+
+func (r *Repository) CreateAttendant(ctx context.Context, attendant *entity.Attendant) error {
+	err := r.Pg.Db.Create(attendant).Error
+	return err
+}
+
+func (r *Repository) FindAttendant(ctx context.Context, attendantID *string) (*entity.Attendant, error) {
+	var e entity.Attendant
+
+	r.Pg.Db.First(&e, "id = ?", *attendantID)
+
+	if e.ID == nil {
+		return nil, fmt.Errorf("no attendant found")
+	}
+
+	return &e, nil
+}
+
+func (r *Repository) SaveAttendant(ctx context.Context, attendant *entity.Attendant) error {
+	err := r.Pg.Db.Save(attendant).Error
+	return err
+}

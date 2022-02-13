@@ -22,4 +22,8 @@ type RepoInterface interface {
 	CreateCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
 	FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error)
 	SaveCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
+
+	CreateAttendant(ctx context.Context, attendant *entity.Attendant) error
+	FindAttendant(ctx context.Context, attendantID *string) (*entity.Attendant, error)
+	SaveAttendant(ctx context.Context, attendant *entity.Attendant) error
 }

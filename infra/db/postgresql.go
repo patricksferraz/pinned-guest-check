@@ -45,5 +45,6 @@ func (p *PostgreSQL) Migrate() {
 		&entity.CheckPad{},
 		&entity.Customer{},
 		&entity.Place{},
+		&entity.Attendant{},
 	)
 }

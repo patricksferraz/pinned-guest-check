@@ -73,3 +73,7 @@ type CheckPadItem struct {
 	Tag            string  `json:"tag"`
 	CheckPadID     string  `json:"check_pad_id"`
 }
+
+type Attendant struct {
+	Base `json:",inline"`
+}

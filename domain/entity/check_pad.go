@@ -25,18 +25,20 @@ type CheckPad struct {
 	Customer       *Customer       `json:"-" valid:"-"`
 	PlaceID        *string         `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place          `json:"-" valid:"-"`
+	AttendantBy    *string         `json:"attendant_id" gorm:"column:attendant_id;type:uuid;not null" valid:"uuid,optional"`
+	Attendant      *Attendant      `json:"-" valid:"-"`
 	Items          []*CheckPadItem `json:"-" gorm:"ForeignKey:CheckPadID" valid:"-"`
 	items          []*CheckPadItem `json:"-" gorm:"-" valid:"-"`
 }
 
 func NewCheckPad(local *string, customer *Customer, place *Place) (*CheckPad, error) {
 	e := CheckPad{
+		Status:     CHECK_PAD_OPENED,
 		Local:      local,
 		CustomerID: customer.ID,
 		Customer:   customer,
 		PlaceID:    place.ID,
 		Place:      place,
-		Status:     CHECK_PAD_OPENED,
 	}
 
 	e.ID = utils.PString(uuid.NewV4().String())
@@ -129,5 +131,13 @@ func (e *CheckPad) AddItem(checkPadItem *CheckPadItem) error {
 	e.items = append(e.Items, checkPadItem)
 	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.processPrice()
+	return err
+}
+
+func (e *CheckPad) SetAttendant(attendant *Attendant) error {
+	e.AttendantBy = attendant.ID
+	e.Attendant = attendant
+	e.UpdatedAt = utils.PTime(time.Now())
+	err := e.isValid()
 	return err
 }

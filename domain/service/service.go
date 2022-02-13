@@ -266,3 +266,25 @@ func (s *Service) DeliverCheckPadItem(ctx context.Context, checkPadID, checkPadI
 
 	return nil
 }
+
+func (s *Service) CreateAttendant(ctx context.Context) (*string, error) {
+	attendant, err := entity.NewAttendant()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = s.Repo.CreateAttendant(ctx, attendant); err != nil {
+		return nil, err
+	}
+
+	return attendant.ID, nil
+}
+
+func (s *Service) FindAttendant(ctx context.Context, attendantID *string) (*entity.Attendant, error) {
+	attendant, err := s.Repo.FindAttendant(ctx, attendantID)
+	if err != nil {
+		return nil, err
+	}
+
+	return attendant, nil
+}
