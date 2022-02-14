@@ -5,6 +5,8 @@ import (
 
 	"github.com/c-4u/check-pad/domain/entity"
 	"github.com/c-4u/check-pad/domain/repo"
+	"github.com/c-4u/check-pad/infra/client/kafka/topic"
+	"github.com/c-4u/check-pad/utils"
 )
 
 type Service struct {
@@ -17,8 +19,8 @@ func NewService(repo repo.RepoInterface) *Service {
 	}
 }
 
-func (s *Service) CreateCustomer(ctx context.Context) (*string, error) {
-	customer, err := entity.NewCustomer()
+func (s *Service) CreateCustomer(ctx context.Context, customerID *string) (*string, error) {
+	customer, err := entity.NewCustomer(customerID)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +41,8 @@ func (s *Service) FindCustomer(ctx context.Context, customerID *string) (*entity
 	return customer, nil
 }
 
-func (s *Service) CreatePlace(ctx context.Context) (*string, error) {
-	place, err := entity.NewPlace()
+func (s *Service) CreatePlace(ctx context.Context, placeID *string) (*string, error) {
+	place, err := entity.NewPlace(placeID)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +83,22 @@ func (s *Service) CreateCheckPad(ctx context.Context, local, customerID, placeID
 		return nil, err
 	}
 
+	// TODO: adds retry
+	event, err := entity.NewEvent(checkPad)
+	if err != nil {
+		return nil, err
+	}
+
+	eMsg, err := event.ToJson()
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	return checkPad.ID, nil
 }
 
@@ -93,34 +111,34 @@ func (s *Service) FindCheckPad(ctx context.Context, checkPadID *string) (*entity
 	return checkPad, nil
 }
 
-func (s *Service) ReopenCheckPad(ctx context.Context, checkPadID *string) error {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
-	if err != nil {
-		return err
-	}
-
-	if err := checkPad.Reopen(); err != nil {
-		return err
-	}
-
-	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (s *Service) WaitPaymentCheckPad(ctx context.Context, checkPadID *string) error {
 	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPad.WaitPayment(); err != nil {
+	wpMsg, err := checkPad.WaitPayment()
+	if err != nil {
 		return err
 	}
 
 	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+		return err
+	}
+
+	// TODO: adds retry
+	event, err := entity.NewEvent(wpMsg)
+	if err != nil {
+		return err
+	}
+
+	eMsg, err := event.ToJson()
+	if err != nil {
+		return err
+	}
+
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.WAIT_PAYMENT_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	if err != nil {
 		return err
 	}
 
@@ -133,7 +151,46 @@ func (s *Service) CancelCheckPad(ctx context.Context, checkPadID, canceledReason
 		return err
 	}
 
-	if err := checkPad.Cancel(canceledReason); err != nil {
+	cMsg, err := checkPad.Cancel(canceledReason)
+	if err != nil {
+		return err
+	}
+
+	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+		return err
+	}
+
+	// TODO: adds retry
+	event, err := entity.NewEvent(cMsg)
+	if err != nil {
+		return err
+	}
+
+	eMsg, err := event.ToJson()
+	if err != nil {
+		return err
+	}
+
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.CANCEL_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) OpenCheckPad(ctx context.Context, checkPadID, attendantID *string) error {
+	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+	if err != nil {
+		return err
+	}
+
+	attendant, err := s.Repo.FindAttendant(ctx, attendantID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPad.SetAttendant(attendant); err != nil {
 		return err
 	}
 
@@ -161,13 +218,13 @@ func (s *Service) PayCheckPad(ctx context.Context, checkPadID *string) error {
 	return nil
 }
 
-func (s *Service) AddCheckPadItem(ctx context.Context, name *string, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, checkPadID *string) (*string, error) {
+func (s *Service) AddCheckPadItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, checkPadID *string) (*string, error) {
 	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
 	if err != nil {
 		return nil, err
 	}
 
-	checkPadItem, err := entity.NewCheckPadItem(name, quantity, unitPrice, discount, note, tag, checkPad)
+	checkPadItem, err := entity.NewCheckPadItem(name, code, quantity, unitPrice, discount, note, tag, checkPad)
 	if err != nil {
 		return nil, err
 	}
@@ -177,12 +234,29 @@ func (s *Service) AddCheckPadItem(ctx context.Context, name *string, quantity *i
 		return nil, err
 	}
 
+	// TODO: Adds transaction
 	err = s.Repo.CreateCheckPadItem(ctx, checkPadItem)
 	if err != nil {
 		return nil, err
 	}
 
 	err = s.Repo.SaveCheckPad(ctx, checkPad)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: adds retry
+	event, err := entity.NewEvent(checkPadItem)
+	if err != nil {
+		return nil, err
+	}
+
+	eMsg, err := event.ToJson()
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_CHECK_PAD_ITEM), utils.PString(string(eMsg)), checkPad.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -267,8 +341,8 @@ func (s *Service) DeliverCheckPadItem(ctx context.Context, checkPadID, checkPadI
 	return nil
 }
 
-func (s *Service) CreateAttendant(ctx context.Context) (*string, error) {
-	attendant, err := entity.NewAttendant()
+func (s *Service) CreateAttendant(ctx context.Context, attendantID *string) (*string, error) {
+	attendant, err := entity.NewAttendant(attendantID)
 	if err != nil {
 		return nil, err
 	}

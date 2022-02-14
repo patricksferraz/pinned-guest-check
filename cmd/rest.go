@@ -10,15 +10,21 @@ import (
 	"path/filepath"
 	"runtime"
 
+	appKafka "github.com/c-4u/check-pad/app/kafka"
 	"github.com/c-4u/check-pad/app/rest"
+	"github.com/c-4u/check-pad/infra/client/kafka"
+	"github.com/c-4u/check-pad/infra/client/kafka/topic"
 	"github.com/c-4u/check-pad/infra/db"
 	"github.com/c-4u/check-pad/utils"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
 // restCmd represents the rest command
 func restCmd() *cobra.Command {
+	var servers string
+	var groupId string
 	var restPort int
 	var dsn string
 	var dsnType string
@@ -42,15 +48,32 @@ func restCmd() *cobra.Command {
 			}
 			defer pg.Db.Close()
 
-			rest.StartRestServer(pg, restPort)
+			kc, err := kafka.NewKafkaConsumer(servers, groupId, topic.CONSUMER_TOPICS)
+			if err != nil {
+				log.Fatal("cannot start kafka consumer", err)
+			}
+
+			deliveryChan := make(chan ckafka.Event)
+			kp, err := kafka.NewKafkaProducer(servers, deliveryChan)
+			if err != nil {
+				log.Fatal("cannot start kafka producer", err)
+			}
+
+			go kp.DeliveryReport()
+			go appKafka.StartKafkaServer(pg, kc, kp)
+			rest.StartRestServer(pg, kp, restPort)
 		},
 	}
 
 	dDsn := os.Getenv("DSN")
 	sDsnType := os.Getenv("DSN_TYPE")
+	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
+	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "check-pad")
 
 	restCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
 	restCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
+	restCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
+	restCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
 	restCmd.Flags().IntVarP(&restPort, "port", "p", 8080, "rest server port")
 
 	return restCmd

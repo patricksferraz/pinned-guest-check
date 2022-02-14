@@ -5,7 +5,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/c-4u/check-pad/utils"
-	uuid "github.com/satori/go.uuid"
 )
 
 func init() {
@@ -16,12 +15,12 @@ type Customer struct {
 	Base `json:",inline" valid:"-"`
 }
 
-func NewCustomer() (*Customer, error) {
+func NewCustomer(id *string) (*Customer, error) {
 	e := Customer{}
-	e.ID = utils.PString(uuid.NewV4().String())
+	e.ID = id
 	e.CreatedAt = utils.PTime(time.Now())
 
-	err := e.isValid()
+	err := e.IsValid()
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +28,7 @@ func NewCustomer() (*Customer, error) {
 	return &e, nil
 }
 
-func (e *Customer) isValid() error {
+func (e *Customer) IsValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }

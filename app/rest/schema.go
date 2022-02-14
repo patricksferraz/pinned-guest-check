@@ -48,6 +48,7 @@ type CancelCheckPadRequest struct {
 
 type AddCheckPadItemRequest struct {
 	Name      string  `json:"name"`
+	Code      int     `json:"code"`
 	Quantity  int     `json:"quantity"`
 	UnitPrice float64 `json:"unit_price"`
 	Discount  float64 `json:"discount,omitempty"`
@@ -64,6 +65,7 @@ type CheckPadItem struct {
 	Status         int     `json:"status"`
 	CanceledReason string  `json:"canceled_reason,omitempty"`
 	Name           string  `json:"name"`
+	Code           int     `json:"code"`
 	Quantity       int     `json:"quantity"`
 	UnitPrice      float64 `json:"unit_price"`
 	Discount       float64 `json:"discount,omitempty"`
