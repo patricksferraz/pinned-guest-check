@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   rest.AddCheckPadItemRequest:
     properties:
+      code:
+        type: integer
       discount:
         type: number
       name:
@@ -14,15 +16,6 @@ definitions:
         type: string
       unit_price:
         type: number
-    type: object
-  rest.Attendant:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      updated_at:
-        type: string
     type: object
   rest.CancelCheckPadItemRequest:
     properties:
@@ -65,6 +58,8 @@ definitions:
         type: string
       check_pad_id:
         type: string
+      code:
+        type: integer
       created_at:
         type: string
       discount:
@@ -99,15 +94,6 @@ definitions:
       place_id:
         type: string
     type: object
-  rest.Customer:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      updated_at:
-        type: string
-    type: object
   rest.HTTPResponse:
     properties:
       msg:
@@ -119,15 +105,6 @@ definitions:
       id:
         type: string
     type: object
-  rest.Place:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      updated_at:
-        type: string
-    type: object
 info:
   contact:
     email: contato@coding4u.com.br
@@ -137,60 +114,6 @@ info:
   title: Check Pad Swagger API
   version: "1.0"
 paths:
-  /attendants:
-    post:
-      consumes:
-      - application/json
-      description: Router for create a new attendant
-      operationId: createAttendant
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.IDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: create a new attendant
-      tags:
-      - Attendant
-  /attendants/{attendant_id}:
-    get:
-      consumes:
-      - application/json
-      description: Router for find a attendant
-      operationId: findAttendant
-      parameters:
-      - description: Attendant ID
-        in: path
-        name: attendant_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.Attendant'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: find a attendant
-      tags:
-      - Attendant
   /check-pads:
     post:
       consumes:
@@ -400,171 +323,6 @@ paths:
       summary: cancel a check pad item
       tags:
       - Check Pad
-  /check-pads/{check_pad_id}/items/{check_pad_item_id}/deliver:
-    post:
-      consumes:
-      - application/json
-      description: Router for deliver a check pad item
-      operationId: deliverCheckPadItem
-      parameters:
-      - description: Check pad ID
-        in: path
-        name: check_pad_id
-        required: true
-        type: string
-      - description: Check pad item ID
-        in: path
-        name: check_pad_item_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: deliver a check pad item
-      tags:
-      - Check Pad
-  /check-pads/{check_pad_id}/items/{check_pad_item_id}/forward:
-    post:
-      consumes:
-      - application/json
-      description: Router for forward a check pad item
-      operationId: forwardCheckPadItem
-      parameters:
-      - description: Check pad ID
-        in: path
-        name: check_pad_id
-        required: true
-        type: string
-      - description: Check pad item ID
-        in: path
-        name: check_pad_item_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: forward a check pad item
-      tags:
-      - Check Pad
-  /check-pads/{check_pad_id}/items/{check_pad_item_id}/prepare:
-    post:
-      consumes:
-      - application/json
-      description: Router for prepare a check pad item
-      operationId: prepareCheckPadItem
-      parameters:
-      - description: Check pad ID
-        in: path
-        name: check_pad_id
-        required: true
-        type: string
-      - description: Check pad item ID
-        in: path
-        name: check_pad_item_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: prepare a check pad item
-      tags:
-      - Check Pad
-  /check-pads/{check_pad_id}/pay:
-    post:
-      consumes:
-      - application/json
-      description: Router for pay a check pad
-      operationId: payCheckPad
-      parameters:
-      - description: Check pad ID
-        in: path
-        name: check_pad_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: pay a check pad
-      tags:
-      - Check Pad
-  /check-pads/{check_pad_id}/reopen:
-    post:
-      consumes:
-      - application/json
-      description: Router for reopen a check pad
-      operationId: reopenCheckPad
-      parameters:
-      - description: Check pad ID
-        in: path
-        name: check_pad_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: reopen a check pad
-      tags:
-      - Check Pad
   /check-pads/{check_pad_id}/wait-payment:
     post:
       consumes:
@@ -595,114 +353,6 @@ paths:
       summary: wait payment a check pad
       tags:
       - Check Pad
-  /customers:
-    post:
-      consumes:
-      - application/json
-      description: Router for create a new customer
-      operationId: createCustomer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.IDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: create a new customer
-      tags:
-      - Customer
-  /customers/{customer_id}:
-    get:
-      consumes:
-      - application/json
-      description: Router for find a customer
-      operationId: findCustomer
-      parameters:
-      - description: Customer ID
-        in: path
-        name: customer_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.Customer'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: find a customer
-      tags:
-      - Customer
-  /places:
-    post:
-      consumes:
-      - application/json
-      description: Router for create a new place
-      operationId: createPlace
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.IDResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: create a new place
-      tags:
-      - Place
-  /places/{place_id}:
-    get:
-      consumes:
-      - application/json
-      description: Router for find a place
-      operationId: findPlace
-      parameters:
-      - description: Place ID
-        in: path
-        name: place_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.Place'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-      summary: find a place
-      tags:
-      - Place
 securityDefinitions:
   ApiKeyAuth:
     in: header

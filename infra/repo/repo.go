@@ -5,16 +5,20 @@ import (
 	"fmt"
 
 	"github.com/c-4u/check-pad/domain/entity"
+	"github.com/c-4u/check-pad/infra/client/kafka"
 	"github.com/c-4u/check-pad/infra/db"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 type Repository struct {
 	Pg *db.PostgreSQL
+	Kp *kafka.KafkaProducer
 }
 
-func NewRepository(pg *db.PostgreSQL) *Repository {
+func NewRepository(pg *db.PostgreSQL, kp *kafka.KafkaProducer) *Repository {
 	return &Repository{
 		Pg: pg,
+		Kp: kp,
 	}
 }
 
@@ -124,4 +128,17 @@ func (r *Repository) FindAttendant(ctx context.Context, attendantID *string) (*e
 func (r *Repository) SaveAttendant(ctx context.Context, attendant *entity.Attendant) error {
 	err := r.Pg.Db.Save(attendant).Error
 	return err
+}
+
+func (r *Repository) PublishEvent(ctx context.Context, topic, msg, key *string) error {
+	message := &ckafka.Message{
+		TopicPartition: ckafka.TopicPartition{Topic: topic, Partition: ckafka.PartitionAny},
+		Value:          []byte(*msg),
+		Key:            []byte(*key),
+	}
+	err := r.Kp.Producer.Produce(message, r.Kp.DeliveryChan)
+	if err != nil {
+		return err
+	}
+	return nil
 }

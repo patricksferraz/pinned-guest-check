@@ -13,6 +13,24 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
+type WaitPaymentCheckPad struct {
+	CheckPadID *string `json:"check_pad_id" valid:"uuid"`
+}
+
+func (e *WaitPaymentCheckPad) IsValid() error {
+	_, err := govalidator.ValidateStruct(e)
+	return err
+}
+
+type CancelCheckPad struct {
+	CheckPadID *string `json:"check_pad_id" valid:"uuid"`
+}
+
+func (e *CancelCheckPad) IsValid() error {
+	_, err := govalidator.ValidateStruct(e)
+	return err
+}
+
 type CheckPad struct {
 	Base           `json:",inline" valid:"-"`
 	TotalPrice     *float64        `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
@@ -25,7 +43,7 @@ type CheckPad struct {
 	Customer       *Customer       `json:"-" valid:"-"`
 	PlaceID        *string         `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place          `json:"-" valid:"-"`
-	AttendantBy    *string         `json:"attendant_id" gorm:"column:attendant_id;type:uuid;not null" valid:"uuid,optional"`
+	AttendantBy    *string         `json:"attendant_by" gorm:"column:attendant_by;type:uuid" valid:"uuid,optional"`
 	Attendant      *Attendant      `json:"-" valid:"-"`
 	Items          []*CheckPadItem `json:"-" gorm:"ForeignKey:CheckPadID" valid:"-"`
 	items          []*CheckPadItem `json:"-" gorm:"-" valid:"-"`
@@ -33,7 +51,7 @@ type CheckPad struct {
 
 func NewCheckPad(local *string, customer *Customer, place *Place) (*CheckPad, error) {
 	e := CheckPad{
-		Status:     CHECK_PAD_OPENED,
+		Status:     CHECK_PAD_PENDING,
 		Local:      local,
 		CustomerID: customer.ID,
 		Customer:   customer,
@@ -44,7 +62,7 @@ func NewCheckPad(local *string, customer *Customer, place *Place) (*CheckPad, er
 	e.ID = utils.PString(uuid.NewV4().String())
 	e.CreatedAt = utils.PTime(time.Now())
 
-	err := e.isValid()
+	err := e.IsValid()
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +70,7 @@ func NewCheckPad(local *string, customer *Customer, place *Place) (*CheckPad, er
 	return &e, nil
 }
 
-func (e *CheckPad) isValid() error {
+func (e *CheckPad) IsValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }
@@ -73,52 +91,54 @@ func (e *CheckPad) processPrice() error {
 	e.TotalPrice = &totalPrice
 	e.TotalDiscount = &totalDiscount
 	e.FinalPrice = utils.PFloat64(*e.TotalPrice - *e.TotalDiscount)
-	err := e.isValid()
+	err := e.IsValid()
 	return err
 }
 
-func (e *CheckPad) Reopen() error {
-	if e.Status == CHECK_PAD_PAID {
-		return errors.New("the paid check pad cannot be reopened")
-	}
-
-	e.Status = CHECK_PAD_OPENED
-	e.UpdatedAt = utils.PTime(time.Now())
-	err := e.isValid()
-	return err
-}
-
-func (e *CheckPad) WaitPayment() error {
+func (e *CheckPad) WaitPayment() (*WaitPaymentCheckPad, error) {
 	if e.Status == CHECK_PAD_AWAITING_PAYMENT {
-		return errors.New("the check pad has already been awaiting payment")
+		return nil, errors.New("the check pad has already been awaiting payment")
 	}
 
 	e.Status = CHECK_PAD_AWAITING_PAYMENT
 	e.UpdatedAt = utils.PTime(time.Now())
-	err := e.isValid()
-	return err
+
+	if err := e.IsValid(); err != nil {
+		return nil, err
+	}
+
+	return &WaitPaymentCheckPad{CheckPadID: e.ID}, nil
 }
 
-func (e *CheckPad) Cancel(canceledReason *string) error {
+func (e *CheckPad) Cancel(canceledReason *string) (*CancelCheckPad, error) {
 	if e.Status == CHECK_PAD_CANCELED {
-		return errors.New("the check pad has already been canceled")
+		return nil, errors.New("the check pad has already been canceled")
 	}
 
 	if e.Status == CHECK_PAD_PAID {
-		return errors.New("the paid check pad cannot be canceled")
+		return nil, errors.New("the paid check pad cannot be canceled")
+	}
+
+	// TODO: adds the best way
+	if len(e.items) > 0 || len(e.Items) > 0 {
+		return nil, errors.New("the check pad cannot be canceled")
 	}
 
 	e.Status = CHECK_PAD_CANCELED
 	e.CanceledReason = canceledReason
 	e.UpdatedAt = utils.PTime(time.Now())
-	err := e.isValid()
-	return err
+	err := e.IsValid()
+	return &CancelCheckPad{CheckPadID: e.ID}, err
 }
 
 func (e *CheckPad) Pay() error {
+	if e.Status == CHECK_PAD_CANCELED {
+		return errors.New("the canceled check pad cannot be paid")
+	}
+
 	e.Status = CHECK_PAD_PAID
 	e.UpdatedAt = utils.PTime(time.Now())
-	err := e.isValid()
+	err := e.IsValid()
 	return err
 }
 
@@ -138,6 +158,6 @@ func (e *CheckPad) SetAttendant(attendant *Attendant) error {
 	e.AttendantBy = attendant.ID
 	e.Attendant = attendant
 	e.UpdatedAt = utils.PTime(time.Now())
-	err := e.isValid()
+	err := e.IsValid()
 	return err
 }

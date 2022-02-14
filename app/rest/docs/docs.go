@@ -28,87 +28,6 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/attendants": {
-            "post": {
-                "description": "Router for create a new attendant",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Attendant"
-                ],
-                "summary": "create a new attendant",
-                "operationId": "createAttendant",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.IDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/attendants/{attendant_id}": {
-            "get": {
-                "description": "Router for find a attendant",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Attendant"
-                ],
-                "summary": "find a attendant",
-                "operationId": "findAttendant",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Attendant ID",
-                        "name": "attendant_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.Attendant"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/check-pads": {
             "post": {
                 "description": "Router for create a new check pad",
@@ -422,252 +341,6 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/items/{check_pad_item_id}/deliver": {
-            "post": {
-                "description": "Router for deliver a check pad item",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Check Pad"
-                ],
-                "summary": "deliver a check pad item",
-                "operationId": "deliverCheckPadItem",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Check pad item ID",
-                        "name": "check_pad_item_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/check-pads/{check_pad_id}/items/{check_pad_item_id}/forward": {
-            "post": {
-                "description": "Router for forward a check pad item",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Check Pad"
-                ],
-                "summary": "forward a check pad item",
-                "operationId": "forwardCheckPadItem",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Check pad item ID",
-                        "name": "check_pad_item_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/check-pads/{check_pad_id}/items/{check_pad_item_id}/prepare": {
-            "post": {
-                "description": "Router for prepare a check pad item",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Check Pad"
-                ],
-                "summary": "prepare a check pad item",
-                "operationId": "prepareCheckPadItem",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Check pad item ID",
-                        "name": "check_pad_item_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/check-pads/{check_pad_id}/pay": {
-            "post": {
-                "description": "Router for pay a check pad",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Check Pad"
-                ],
-                "summary": "pay a check pad",
-                "operationId": "payCheckPad",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/check-pads/{check_pad_id}/reopen": {
-            "post": {
-                "description": "Router for reopen a check pad",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Check Pad"
-                ],
-                "summary": "reopen a check pad",
-                "operationId": "reopenCheckPad",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/check-pads/{check_pad_id}/wait-payment": {
             "post": {
                 "description": "Router for wait payment a check pad",
@@ -712,174 +385,15 @@ var doc = `{
                     }
                 }
             }
-        },
-        "/customers": {
-            "post": {
-                "description": "Router for create a new customer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Customer"
-                ],
-                "summary": "create a new customer",
-                "operationId": "createCustomer",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.IDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/customers/{customer_id}": {
-            "get": {
-                "description": "Router for find a customer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Customer"
-                ],
-                "summary": "find a customer",
-                "operationId": "findCustomer",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Customer ID",
-                        "name": "customer_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.Customer"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/places": {
-            "post": {
-                "description": "Router for create a new place",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Place"
-                ],
-                "summary": "create a new place",
-                "operationId": "createPlace",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.IDResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/places/{place_id}": {
-            "get": {
-                "description": "Router for find a place",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Place"
-                ],
-                "summary": "find a place",
-                "operationId": "findPlace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Place ID",
-                        "name": "place_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.Place"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
         "rest.AddCheckPadItemRequest": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer"
+                },
                 "discount": {
                     "type": "number"
                 },
@@ -897,20 +411,6 @@ var doc = `{
                 },
                 "unit_price": {
                     "type": "number"
-                }
-            }
-        },
-        "rest.Attendant": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         },
@@ -977,6 +477,9 @@ var doc = `{
                 "check_pad_id": {
                     "type": "string"
                 },
+                "code": {
+                    "type": "integer"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -1029,20 +532,6 @@ var doc = `{
                 }
             }
         },
-        "rest.Customer": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
         "rest.HTTPResponse": {
             "type": "object",
             "properties": {
@@ -1056,20 +545,6 @@ var doc = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "rest.Place": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }
