@@ -75,7 +75,7 @@ jobs:
         file: .docker/Dockerfile.prod
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.prep.outputs.tags }}
-        target: runtime
+        target: runner
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
 
