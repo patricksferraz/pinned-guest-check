@@ -9,7 +9,7 @@ services:
     environment:
       ENV: dev
     ports:
-      - $CHECK_PAD_REST_PORT:8080
+      - $REST_PORT:$REST_PORT
     volumes:
       - .:/go/src/
     depends_on:

@@ -98,27 +98,7 @@ To get a local copy up and running follow these simple steps.
 
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 
-- Create a secret for github docker registry
-
-  ```sh
-  kubectl create secret docker-registry regsecret \
-  --docker-server=$DOCKER_REGISTRY_SERVER \
-  --docker-username=$DOCKER_USER \
-  --docker-password=$DOCKER_PASSWORD \
-  --docker-email=$DOCKER_EMAIL
-  ```
-
-- Create a secret with env credentials
-
-  ```sh
-  # file: credentials
-  DB_DEBUG=true
-  DB_MIGRATE=true
-  DSN_TYPE=postgres
-  DSN="dbname=check-pad sslmode=disable user=postgres password=pasword host=postgres"
-  ```
-
-  `kubectl create secret generic check-pad-secret --from-env-file ./credentials`
+- Create a secrets: see "_k8s/instructions.md_"
 
 ### Deploy
 
@@ -163,22 +143,7 @@ Any contributions you make are **greatly appreciated**.
   sudo apt-get install docker docker-compose docker.io -y
   ```
 
-- Environment
-
-  ```sh
-  # .env
-  CHECK_PAD_REST_PORT=
-
-  POSTGRES_DB=
-  POSTGRES_USER=
-  POSTGRES_PASSWORD=
-  DB_MIGRATE=
-  DB_DEBUG=
-  DB_PORT=
-
-  DSN_TYPE=
-  DSN=
-  ```
+- Environment: see "_.env.example_"
 
 **Installation**:
 
