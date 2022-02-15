@@ -52,6 +52,12 @@ func (p *KafkaProcessor) processMessage(msg *ckafka.Message) error {
 			p.retry(msg)
 			return fmt.Errorf("prepare check pad item, error %s", err)
 		}
+	case topic.READY_CHECK_PAD_ITEM:
+		err := p.readyCheckPadItem(msg)
+		if err != nil {
+			p.retry(msg)
+			return fmt.Errorf("ready check pad item, error %s", err)
+		}
 	case topic.FORWARD_CHECK_PAD_ITEM:
 		err := p.forwardCheckPadItem(msg)
 		if err != nil {
@@ -138,6 +144,21 @@ func (p *KafkaProcessor) prepareCheckPadItem(msg *ckafka.Message) error {
 	}
 
 	err = p.Service.PrepareCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *KafkaProcessor) readyCheckPadItem(msg *ckafka.Message) error {
+	e := &event.ReadyCheckPadItem{}
+	err := e.ParseJson(msg.Value, e)
+	if err != nil {
+		return err
+	}
+
+	err = p.Service.ReadyCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
 	if err != nil {
 		return err
 	}

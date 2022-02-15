@@ -7,6 +7,7 @@ func init() {
 		res := str == CHECK_PAD_ITEM_PENDING.String()
 		res = res || str == CHECK_PAD_ITEM_CANCELED.String()
 		res = res || str == CHECK_PAD_ITEM_PREPARING.String()
+		res = res || str == CHECK_PAD_ITEM_READY.String()
 		res = res || str == CHECK_PAD_ITEM_ON_THE_WAY.String()
 		res = res || str == CHECK_PAD_ITEM_DELIVERED.String()
 		return res
@@ -19,6 +20,7 @@ const (
 	CHECK_PAD_ITEM_PENDING CheckPadItemStatus = iota + 1
 	CHECK_PAD_ITEM_CANCELED
 	CHECK_PAD_ITEM_PREPARING
+	CHECK_PAD_ITEM_READY
 	CHECK_PAD_ITEM_ON_THE_WAY
 	CHECK_PAD_ITEM_DELIVERED
 )
@@ -31,6 +33,8 @@ func (t CheckPadItemStatus) String() string {
 		return "CANCELED"
 	case CHECK_PAD_ITEM_PREPARING:
 		return "PREPARING"
+	case CHECK_PAD_ITEM_READY:
+		return "READY"
 	case CHECK_PAD_ITEM_ON_THE_WAY:
 		return "ON_THE_WAY"
 	case CHECK_PAD_ITEM_DELIVERED:

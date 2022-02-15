@@ -21,6 +21,16 @@ type PrepareCheckPadItem struct {
 	Msg   *prepareCheckPadItemMsg `json:"msg"`
 }
 
+type readyCheckPadItemMsg struct {
+	CheckPadID     *string `json:"check_pad_id" valid:"uuid"`
+	CheckPadItemID *string `json:"check_pad_item_id,omitempty" valid:"uuid"`
+}
+
+type ReadyCheckPadItem struct {
+	Event `json:",inline"`
+	Msg   *readyCheckPadItemMsg `json:"msg"`
+}
+
 type forwardCheckPadItemMsg struct {
 	CheckPadID     *string `json:"check_pad_id" valid:"uuid"`
 	CheckPadItemID *string `json:"check_pad_item_id,omitempty" valid:"uuid"`

@@ -84,6 +84,13 @@ func (e *CheckPadItem) Prepare() error {
 	return err
 }
 
+func (e *CheckPadItem) Ready() error {
+	e.Status = CHECK_PAD_ITEM_READY
+	e.UpdatedAt = utils.PTime(time.Now())
+	err := e.IsValid()
+	return err
+}
+
 func (e *CheckPadItem) Forward() error {
 	e.Status = CHECK_PAD_ITEM_ON_THE_WAY
 	e.UpdatedAt = utils.PTime(time.Now())

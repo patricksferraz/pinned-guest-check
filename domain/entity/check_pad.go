@@ -154,7 +154,8 @@ func (e *CheckPad) AddItem(checkPadItem *CheckPadItem) error {
 	return err
 }
 
-func (e *CheckPad) SetAttendant(attendant *Attendant) error {
+func (e *CheckPad) Open(attendant *Attendant) error {
+	e.Status = CHECK_PAD_OPENED
 	e.AttendantBy = attendant.ID
 	e.Attendant = attendant
 	e.UpdatedAt = utils.PTime(time.Now())

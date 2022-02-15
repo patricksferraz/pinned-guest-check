@@ -190,7 +190,7 @@ func (s *Service) OpenCheckPad(ctx context.Context, checkPadID, attendantID *str
 		return err
 	}
 
-	if err := checkPad.SetAttendant(attendant); err != nil {
+	if err := checkPad.Open(attendant); err != nil {
 		return err
 	}
 
@@ -297,6 +297,23 @@ func (s *Service) PrepareCheckPadItem(ctx context.Context, checkPadID, checkPadI
 	}
 
 	if err := checkPadItem.Prepare(); err != nil {
+		return err
+	}
+
+	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) ReadyCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
+	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPadItem.Ready(); err != nil {
 		return err
 	}
 
