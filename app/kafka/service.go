@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/c-4u/check-pad/app/kafka/event"
-	"github.com/c-4u/check-pad/domain/service"
-	"github.com/c-4u/check-pad/infra/client/kafka"
-	"github.com/c-4u/check-pad/infra/client/kafka/topic"
+	"github.com/c-4u/guest-check/app/kafka/event"
+	"github.com/c-4u/guest-check/domain/service"
+	"github.com/c-4u/guest-check/infra/client/kafka"
+	"github.com/c-4u/guest-check/infra/client/kafka/topic"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -40,55 +40,55 @@ func (p *KafkaProcessor) Consume() {
 func (p *KafkaProcessor) processMessage(msg *ckafka.Message) error {
 	switch _topic := *msg.TopicPartition.Topic; _topic {
 	// CHEKC_PAD_ITEM
-	case topic.CANCEL_CHECK_PAD_ITEM:
-		err := p.cancelCheckPadItem(msg)
+	case topic.CANCEL_GUEST_CHECK_ITEM:
+		err := p.cancelGuestCheckItem(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("cancel check pad item, error %s", err)
+			return fmt.Errorf("cancel guest check item, error %s", err)
 		}
-	case topic.PREPARE_CHECK_PAD_ITEM:
-		err := p.prepareCheckPadItem(msg)
+	case topic.PREPARE_GUEST_CHECK_ITEM:
+		err := p.prepareGuestCheckItem(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("prepare check pad item, error %s", err)
+			return fmt.Errorf("prepare guest check item, error %s", err)
 		}
-	case topic.READY_CHECK_PAD_ITEM:
-		err := p.readyCheckPadItem(msg)
+	case topic.READY_GUEST_CHECK_ITEM:
+		err := p.readyGuestCheckItem(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("ready check pad item, error %s", err)
+			return fmt.Errorf("ready guest check item, error %s", err)
 		}
-	case topic.FORWARD_CHECK_PAD_ITEM:
-		err := p.forwardCheckPadItem(msg)
+	case topic.FORWARD_GUEST_CHECK_ITEM:
+		err := p.forwardGuestCheckItem(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("forward check pad item, error %s", err)
+			return fmt.Errorf("forward guest check item, error %s", err)
 		}
-	case topic.DELIVER_CHECK_PAD_ITEM:
-		err := p.deliverCheckPadItem(msg)
+	case topic.DELIVER_GUEST_CHECK_ITEM:
+		err := p.deliverGuestCheckItem(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("deliver check pad item, error %s", err)
+			return fmt.Errorf("deliver guest check item, error %s", err)
 		}
-	// CHECK_PAD
-	case topic.OPEN_CHECK_PAD:
-		err := p.openCheckPad(msg)
+	// GUEST_CHECK
+	case topic.OPEN_GUEST_CHECK:
+		err := p.openGuestCheck(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("open check pad, error %s", err)
+			return fmt.Errorf("open guest check, error %s", err)
 		}
-	case topic.PAY_CHECK_PAD:
-		err := p.payCheckPad(msg)
+	case topic.PAY_GUEST_CHECK:
+		err := p.payGuestCheck(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("pay check pad, error %s", err)
+			return fmt.Errorf("pay guest check, error %s", err)
 		}
-	// CUSTOMER
-	case topic.NEW_CUSTOMER:
-		err := p.createCustomer(msg)
+	// GUEST
+	case topic.NEW_GUEST:
+		err := p.createGuest(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("create customer, error %s", err)
+			return fmt.Errorf("create guest, error %s", err)
 		}
 	// PLACE
 	case topic.NEW_PLACE:
@@ -121,14 +121,14 @@ func (p *KafkaProcessor) retry(msg *ckafka.Message) error {
 	return err
 }
 
-func (p *KafkaProcessor) cancelCheckPadItem(msg *ckafka.Message) error {
-	e := &event.CancelCheckPadItem{}
+func (p *KafkaProcessor) cancelGuestCheckItem(msg *ckafka.Message) error {
+	e := &event.CancelGuestCheckItem{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.CancelCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID, e.Msg.CanceledReason)
+	err = p.Service.CancelGuestCheckItem(context.TODO(), e.Msg.GuestCheckID, e.Msg.GuestCheckItemID, e.Msg.CanceledReason)
 	if err != nil {
 		return err
 	}
@@ -136,14 +136,14 @@ func (p *KafkaProcessor) cancelCheckPadItem(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) prepareCheckPadItem(msg *ckafka.Message) error {
-	e := &event.PrepareCheckPadItem{}
+func (p *KafkaProcessor) prepareGuestCheckItem(msg *ckafka.Message) error {
+	e := &event.PrepareGuestCheckItem{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.PrepareCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
+	err = p.Service.PrepareGuestCheckItem(context.TODO(), e.Msg.GuestCheckID, e.Msg.GuestCheckItemID)
 	if err != nil {
 		return err
 	}
@@ -151,14 +151,14 @@ func (p *KafkaProcessor) prepareCheckPadItem(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) readyCheckPadItem(msg *ckafka.Message) error {
-	e := &event.ReadyCheckPadItem{}
+func (p *KafkaProcessor) readyGuestCheckItem(msg *ckafka.Message) error {
+	e := &event.ReadyGuestCheckItem{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.ReadyCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
+	err = p.Service.ReadyGuestCheckItem(context.TODO(), e.Msg.GuestCheckID, e.Msg.GuestCheckItemID)
 	if err != nil {
 		return err
 	}
@@ -166,14 +166,14 @@ func (p *KafkaProcessor) readyCheckPadItem(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) forwardCheckPadItem(msg *ckafka.Message) error {
-	e := &event.ForwardCheckPadItem{}
+func (p *KafkaProcessor) forwardGuestCheckItem(msg *ckafka.Message) error {
+	e := &event.ForwardGuestCheckItem{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.ForwardCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
+	err = p.Service.ForwardGuestCheckItem(context.TODO(), e.Msg.GuestCheckID, e.Msg.GuestCheckItemID)
 	if err != nil {
 		return err
 	}
@@ -181,14 +181,14 @@ func (p *KafkaProcessor) forwardCheckPadItem(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) deliverCheckPadItem(msg *ckafka.Message) error {
-	e := &event.DeliverCheckPadItem{}
+func (p *KafkaProcessor) deliverGuestCheckItem(msg *ckafka.Message) error {
+	e := &event.DeliverGuestCheckItem{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.DeliverCheckPadItem(context.TODO(), e.Msg.CheckPadID, e.Msg.CheckPadItemID)
+	err = p.Service.DeliverGuestCheckItem(context.TODO(), e.Msg.GuestCheckID, e.Msg.GuestCheckItemID)
 	if err != nil {
 		return err
 	}
@@ -196,14 +196,14 @@ func (p *KafkaProcessor) deliverCheckPadItem(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) openCheckPad(msg *ckafka.Message) error {
-	e := &event.OpenCheckPad{}
+func (p *KafkaProcessor) openGuestCheck(msg *ckafka.Message) error {
+	e := &event.OpenGuestCheck{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.OpenCheckPad(context.TODO(), e.Msg.CheckPadID, e.Msg.AttendantID)
+	err = p.Service.OpenGuestCheck(context.TODO(), e.Msg.GuestCheckID, e.Msg.AttendantID)
 	if err != nil {
 		return err
 	}
@@ -211,14 +211,14 @@ func (p *KafkaProcessor) openCheckPad(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) payCheckPad(msg *ckafka.Message) error {
-	e := &event.PayCheckPad{}
+func (p *KafkaProcessor) payGuestCheck(msg *ckafka.Message) error {
+	e := &event.PayGuestCheck{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.PayCheckPad(context.TODO(), e.Msg.CheckPadID)
+	err = p.Service.PayGuestCheck(context.TODO(), e.Msg.GuestCheckID)
 	if err != nil {
 		return err
 	}
@@ -226,14 +226,14 @@ func (p *KafkaProcessor) payCheckPad(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) createCustomer(msg *ckafka.Message) error {
-	e := &event.Customer{}
+func (p *KafkaProcessor) createGuest(msg *ckafka.Message) error {
+	e := &event.Guest{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	_, err = p.Service.CreateCustomer(context.TODO(), e.Msg.CustomerID)
+	_, err = p.Service.CreateGuest(context.TODO(), e.Msg.GuestID)
 	if err != nil {
 		return err
 	}

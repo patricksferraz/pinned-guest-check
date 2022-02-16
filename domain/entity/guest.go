@@ -4,19 +4,19 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/c-4u/check-pad/utils"
+	"github.com/c-4u/guest-check/utils"
 )
 
 func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-type Customer struct {
+type Guest struct {
 	Base `json:",inline" valid:"-"`
 }
 
-func NewCustomer(id *string) (*Customer, error) {
-	e := Customer{}
+func NewGuest(id *string) (*Guest, error) {
+	e := Guest{}
 	e.ID = id
 	e.CreatedAt = utils.PTime(time.Now())
 
@@ -28,7 +28,7 @@ func NewCustomer(id *string) (*Customer, error) {
 	return &e, nil
 }
 
-func (e *Customer) IsValid() error {
+func (e *Guest) IsValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }

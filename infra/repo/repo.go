@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/c-4u/check-pad/domain/entity"
-	"github.com/c-4u/check-pad/infra/client/kafka"
-	"github.com/c-4u/check-pad/infra/db"
+	"github.com/c-4u/guest-check/domain/entity"
+	"github.com/c-4u/guest-check/infra/client/kafka"
+	"github.com/c-4u/guest-check/infra/db"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -22,25 +22,25 @@ func NewRepository(pg *db.PostgreSQL, kp *kafka.KafkaProducer) *Repository {
 	}
 }
 
-func (r *Repository) CreateCustomer(ctx context.Context, customer *entity.Customer) error {
-	err := r.Pg.Db.Create(customer).Error
+func (r *Repository) CreateGuest(ctx context.Context, guest *entity.Guest) error {
+	err := r.Pg.Db.Create(guest).Error
 	return err
 }
 
-func (r *Repository) FindCustomer(ctx context.Context, customerID *string) (*entity.Customer, error) {
-	var e entity.Customer
+func (r *Repository) FindGuest(ctx context.Context, guestID *string) (*entity.Guest, error) {
+	var e entity.Guest
 
-	r.Pg.Db.First(&e, "id = ?", *customerID)
+	r.Pg.Db.First(&e, "id = ?", *guestID)
 
 	if e.ID == nil {
-		return nil, fmt.Errorf("no customer found")
+		return nil, fmt.Errorf("no guest found")
 	}
 
 	return &e, nil
 }
 
-func (r *Repository) SaveCustomer(ctx context.Context, customer *entity.Customer) error {
-	err := r.Pg.Db.Save(customer).Error
+func (r *Repository) SaveGuest(ctx context.Context, guest *entity.Guest) error {
+	err := r.Pg.Db.Save(guest).Error
 	return err
 }
 
@@ -65,46 +65,46 @@ func (r *Repository) SavePlace(ctx context.Context, place *entity.Place) error {
 	return err
 }
 
-func (r *Repository) CreateCheckPad(ctx context.Context, checkPad *entity.CheckPad) error {
-	err := r.Pg.Db.Create(checkPad).Error
+func (r *Repository) CreateGuestCheck(ctx context.Context, guestCheck *entity.GuestCheck) error {
+	err := r.Pg.Db.Create(guestCheck).Error
 	return err
 }
 
-func (r *Repository) FindCheckPad(ctx context.Context, checkPadID *string) (*entity.CheckPad, error) {
-	var e entity.CheckPad
-	r.Pg.Db.Preload("Items").First(&e, "id = ?", *checkPadID)
+func (r *Repository) FindGuestCheck(ctx context.Context, guestCheckID *string) (*entity.GuestCheck, error) {
+	var e entity.GuestCheck
+	r.Pg.Db.Preload("Items").First(&e, "id = ?", *guestCheckID)
 
 	if e.ID == nil {
-		return nil, fmt.Errorf("no check pad found")
+		return nil, fmt.Errorf("no guest check found")
 	}
 
 	return &e, nil
 }
 
-func (r *Repository) SaveCheckPad(ctx context.Context, checkPad *entity.CheckPad) error {
-	// TODO: infinity loop when saving check pad with backoff Items
-	err := r.Pg.Db.Save(checkPad).Error
+func (r *Repository) SaveGuestCheck(ctx context.Context, guestCheck *entity.GuestCheck) error {
+	// TODO: infinity loop when saving guest check with backoff Items
+	err := r.Pg.Db.Save(guestCheck).Error
 	return err
 }
 
-func (r *Repository) CreateCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error {
-	err := r.Pg.Db.Create(checkPadItem).Error
+func (r *Repository) CreateGuestCheckItem(ctx context.Context, guestCheckItem *entity.GuestCheckItem) error {
+	err := r.Pg.Db.Create(guestCheckItem).Error
 	return err
 }
 
-func (r *Repository) FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error) {
-	var e entity.CheckPadItem
-	r.Pg.Db.Preload("CheckPad").First(&e, "id = ? AND check_pad_id = ?", *checkPadItemID, *checkPadID)
+func (r *Repository) FindGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) (*entity.GuestCheckItem, error) {
+	var e entity.GuestCheckItem
+	r.Pg.Db.Preload("GuestCheck").First(&e, "id = ? AND guest_check_id = ?", *guestCheckItemID, *guestCheckID)
 
 	if e.ID == nil {
-		return nil, fmt.Errorf("no check pad item found")
+		return nil, fmt.Errorf("no guest check item found")
 	}
 
 	return &e, nil
 }
 
-func (r *Repository) SaveCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error {
-	err := r.Pg.Db.Save(checkPadItem).Error
+func (r *Repository) SaveGuestCheckItem(ctx context.Context, guestCheckItem *entity.GuestCheckItem) error {
+	err := r.Pg.Db.Save(guestCheckItem).Error
 	return err
 }
 

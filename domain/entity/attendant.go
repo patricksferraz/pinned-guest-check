@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/c-4u/check-pad/utils"
+	"github.com/c-4u/guest-check/utils"
 )
 
 func init() {
@@ -12,8 +12,8 @@ func init() {
 }
 
 type Attendant struct {
-	Base      `json:",inline" valid:"-"`
-	CheckPads []*CheckPad `json:"check_pads" gorm:"ForeignKey:AttendantBy" valid:"-"`
+	Base        `json:",inline" valid:"-"`
+	GuestChecks []*GuestCheck `json:"guest_checks" gorm:"ForeignKey:AttendantBy" valid:"-"`
 }
 
 func NewAttendant(id *string) (*Attendant, error) {

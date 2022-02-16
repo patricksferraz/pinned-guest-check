@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/c-4u/check-pad/app/rest/docs"
-	"github.com/c-4u/check-pad/domain/service"
-	"github.com/c-4u/check-pad/infra/client/kafka"
-	"github.com/c-4u/check-pad/infra/db"
-	"github.com/c-4u/check-pad/infra/repo"
+	_ "github.com/c-4u/guest-check/app/rest/docs"
+	"github.com/c-4u/guest-check/domain/service"
+	"github.com/c-4u/guest-check/infra/client/kafka"
+	"github.com/c-4u/guest-check/infra/db"
+	"github.com/c-4u/guest-check/infra/repo"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
-// @title Check Pad Swagger API
+// @title Guest Check Swagger API
 // @version 1.0
-// @description Swagger API for Check Pad Service.
+// @description Swagger API for Guest Check Service.
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name Coding4u
@@ -41,16 +41,16 @@ func StartRestServer(pg *db.PostgreSQL, kp *kafka.KafkaProducer, port int) {
 	v1 := api.Group("/v1")
 	v1.Get("/swagger/*", fiberSwagger.WrapHandler)
 	{
-		checkPad := v1.Group("/check-pads")
-		checkPad.Post("", restService.CreateCheckPad)
-		checkPad.Get("/:check_pad_id", restService.FindCheckPad)
-		checkPad.Post("/:check_pad_id/wait-payment", restService.WaitPaymentCheckPad)
-		checkPad.Post("/:check_pad_id/cancel", restService.CancelCheckPad)
+		guestCheck := v1.Group("/guest-checks")
+		guestCheck.Post("", restService.CreateGuestCheck)
+		guestCheck.Get("/:guest_check_id", restService.FindGuestCheck)
+		guestCheck.Post("/:guest_check_id/wait-payment", restService.WaitPaymentGuestCheck)
+		guestCheck.Post("/:guest_check_id/cancel", restService.CancelGuestCheck)
 
-		checkPadItem := checkPad.Group("/:check_pad_id/items")
-		checkPadItem.Post("", restService.AddCheckPadItem)
-		checkPadItem.Get("/:check_pad_item_id", restService.FindCheckPadItem)
-		checkPadItem.Post("/:check_pad_item_id/cancel", restService.CancelCheckPadItem)
+		guestCheckItem := guestCheck.Group("/:guest_check_id/items")
+		guestCheckItem.Post("", restService.AddGuestCheckItem)
+		guestCheckItem.Get("/:guest_check_item_id", restService.FindGuestCheckItem)
+		guestCheckItem.Post("/:guest_check_item_id/cancel", restService.CancelGuestCheckItem)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

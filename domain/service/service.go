@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/c-4u/check-pad/domain/entity"
-	"github.com/c-4u/check-pad/domain/repo"
-	"github.com/c-4u/check-pad/infra/client/kafka/topic"
-	"github.com/c-4u/check-pad/utils"
+	"github.com/c-4u/guest-check/domain/entity"
+	"github.com/c-4u/guest-check/domain/repo"
+	"github.com/c-4u/guest-check/infra/client/kafka/topic"
+	"github.com/c-4u/guest-check/utils"
 )
 
 type Service struct {
@@ -19,26 +19,26 @@ func NewService(repo repo.RepoInterface) *Service {
 	}
 }
 
-func (s *Service) CreateCustomer(ctx context.Context, customerID *string) (*string, error) {
-	customer, err := entity.NewCustomer(customerID)
+func (s *Service) CreateGuest(ctx context.Context, guestID *string) (*string, error) {
+	guest, err := entity.NewGuest(guestID)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = s.Repo.CreateCustomer(ctx, customer); err != nil {
+	if err = s.Repo.CreateGuest(ctx, guest); err != nil {
 		return nil, err
 	}
 
-	return customer.ID, nil
+	return guest.ID, nil
 }
 
-func (s *Service) FindCustomer(ctx context.Context, customerID *string) (*entity.Customer, error) {
-	customer, err := s.Repo.FindCustomer(ctx, customerID)
+func (s *Service) FindGuest(ctx context.Context, guestID *string) (*entity.Guest, error) {
+	guest, err := s.Repo.FindGuest(ctx, guestID)
 	if err != nil {
 		return nil, err
 	}
 
-	return customer, nil
+	return guest, nil
 }
 
 func (s *Service) CreatePlace(ctx context.Context, placeID *string) (*string, error) {
@@ -63,8 +63,8 @@ func (s *Service) FindPlace(ctx context.Context, placeID *string) (*entity.Place
 	return place, nil
 }
 
-func (s *Service) CreateCheckPad(ctx context.Context, local, customerID, placeID *string) (*string, error) {
-	customer, err := s.Repo.FindCustomer(ctx, customerID)
+func (s *Service) CreateGuestCheck(ctx context.Context, local, guestID, placeID *string) (*string, error) {
+	guest, err := s.Repo.FindGuest(ctx, guestID)
 	if err != nil {
 		return nil, err
 	}
@@ -74,17 +74,17 @@ func (s *Service) CreateCheckPad(ctx context.Context, local, customerID, placeID
 		return nil, err
 	}
 
-	checkPad, err := entity.NewCheckPad(local, customer, place)
+	guestCheck, err := entity.NewGuestCheck(local, guest, place)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = s.Repo.CreateCheckPad(ctx, checkPad); err != nil {
+	if err = s.Repo.CreateGuestCheck(ctx, guestCheck); err != nil {
 		return nil, err
 	}
 
 	// TODO: adds retry
-	event, err := entity.NewEvent(checkPad)
+	event, err := entity.NewEvent(guestCheck)
 	if err != nil {
 		return nil, err
 	}
@@ -94,35 +94,35 @@ func (s *Service) CreateCheckPad(ctx context.Context, local, customerID, placeID
 		return nil, err
 	}
 
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return checkPad.ID, nil
+	return guestCheck.ID, nil
 }
 
-func (s *Service) FindCheckPad(ctx context.Context, checkPadID *string) (*entity.CheckPad, error) {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+func (s *Service) FindGuestCheck(ctx context.Context, guestCheckID *string) (*entity.GuestCheck, error) {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return nil, err
 	}
 
-	return checkPad, nil
+	return guestCheck, nil
 }
 
-func (s *Service) WaitPaymentCheckPad(ctx context.Context, checkPadID *string) error {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+func (s *Service) WaitPaymentGuestCheck(ctx context.Context, guestCheckID *string) error {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return err
 	}
 
-	wpMsg, err := checkPad.WaitPayment()
+	wpMsg, err := guestCheck.WaitPayment()
 	if err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
 		return err
 	}
 
@@ -137,7 +137,7 @@ func (s *Service) WaitPaymentCheckPad(ctx context.Context, checkPadID *string) e
 		return err
 	}
 
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.WAIT_PAYMENT_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.WAIT_PAYMENT_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
 	if err != nil {
 		return err
 	}
@@ -145,18 +145,18 @@ func (s *Service) WaitPaymentCheckPad(ctx context.Context, checkPadID *string) e
 	return nil
 }
 
-func (s *Service) CancelCheckPad(ctx context.Context, checkPadID, canceledReason *string) error {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+func (s *Service) CancelGuestCheck(ctx context.Context, guestCheckID, canceledReason *string) error {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return err
 	}
 
-	cMsg, err := checkPad.Cancel(canceledReason)
+	cMsg, err := guestCheck.Cancel(canceledReason)
 	if err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
 		return err
 	}
 
@@ -171,7 +171,7 @@ func (s *Service) CancelCheckPad(ctx context.Context, checkPadID, canceledReason
 		return err
 	}
 
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.CANCEL_CHECK_PAD), utils.PString(string(eMsg)), checkPad.ID)
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.CANCEL_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
 	if err != nil {
 		return err
 	}
@@ -179,8 +179,8 @@ func (s *Service) CancelCheckPad(ctx context.Context, checkPadID, canceledReason
 	return nil
 }
 
-func (s *Service) OpenCheckPad(ctx context.Context, checkPadID, attendantID *string) error {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+func (s *Service) OpenGuestCheck(ctx context.Context, guestCheckID, attendantID *string) error {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return err
 	}
@@ -190,63 +190,63 @@ func (s *Service) OpenCheckPad(ctx context.Context, checkPadID, attendantID *str
 		return err
 	}
 
-	if err := checkPad.Open(attendant); err != nil {
+	if err := guestCheck.Open(attendant); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Service) PayCheckPad(ctx context.Context, checkPadID *string) error {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
-	if err != nil {
-		return err
-	}
-
-	if err := checkPad.Pay(); err != nil {
-		return err
-	}
-
-	if err = s.Repo.SaveCheckPad(ctx, checkPad); err != nil {
+	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) AddCheckPadItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, checkPadID *string) (*string, error) {
-	checkPad, err := s.Repo.FindCheckPad(ctx, checkPadID)
+func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string) error {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
+	if err != nil {
+		return err
+	}
+
+	if err := guestCheck.Pay(); err != nil {
+		return err
+	}
+
+	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) AddGuestCheckItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, guestCheckID *string) (*string, error) {
+	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return nil, err
 	}
 
-	checkPadItem, err := entity.NewCheckPadItem(name, code, quantity, unitPrice, discount, note, tag, checkPad)
+	guestCheckItem, err := entity.NewGuestCheckItem(name, code, quantity, unitPrice, discount, note, tag, guestCheck)
 	if err != nil {
 		return nil, err
 	}
 
-	err = checkPad.AddItem(checkPadItem)
+	err = guestCheck.AddItem(guestCheckItem)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: Adds transaction
-	err = s.Repo.CreateCheckPadItem(ctx, checkPadItem)
+	err = s.Repo.CreateGuestCheckItem(ctx, guestCheckItem)
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.Repo.SaveCheckPad(ctx, checkPad)
+	err = s.Repo.SaveGuestCheck(ctx, guestCheck)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: adds retry
-	event, err := entity.NewEvent(checkPadItem)
+	event, err := entity.NewEvent(guestCheckItem)
 	if err != nil {
 		return nil, err
 	}
@@ -256,102 +256,102 @@ func (s *Service) AddCheckPadItem(ctx context.Context, name *string, code, quant
 		return nil, err
 	}
 
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_CHECK_PAD_ITEM), utils.PString(string(eMsg)), checkPad.ID)
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_GUEST_CHECK_ITEM), utils.PString(string(eMsg)), guestCheck.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return checkPadItem.ID, nil
+	return guestCheckItem.ID, nil
 }
 
-func (s *Service) FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error) {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) FindGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) (*entity.GuestCheckItem, error) {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return nil, err
 	}
 
-	return checkPadItem, nil
+	return guestCheckItem, nil
 }
 
-func (s *Service) CancelCheckPadItem(ctx context.Context, checkPadID, checkPadItemID, canceledReason *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) CancelGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID, canceledReason *string) error {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPadItem.Cancel(canceledReason); err != nil {
+	if err := guestCheckItem.Cancel(canceledReason); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+	if err = s.Repo.SaveGuestCheckItem(ctx, guestCheckItem); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) PrepareCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) PrepareGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) error {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPadItem.Prepare(); err != nil {
+	if err := guestCheckItem.Prepare(); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+	if err = s.Repo.SaveGuestCheckItem(ctx, guestCheckItem); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) ReadyCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) ReadyGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) error {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPadItem.Ready(); err != nil {
+	if err := guestCheckItem.Ready(); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+	if err = s.Repo.SaveGuestCheckItem(ctx, guestCheckItem); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) ForwardCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) ForwardGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) error {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPadItem.Forward(); err != nil {
+	if err := guestCheckItem.Forward(); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+	if err = s.Repo.SaveGuestCheckItem(ctx, guestCheckItem); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) DeliverCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) error {
-	checkPadItem, err := s.Repo.FindCheckPadItem(ctx, checkPadID, checkPadItemID)
+func (s *Service) DeliverGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) error {
+	guestCheckItem, err := s.Repo.FindGuestCheckItem(ctx, guestCheckID, guestCheckItemID)
 	if err != nil {
 		return err
 	}
 
-	if err := checkPadItem.Deliver(); err != nil {
+	if err := guestCheckItem.Deliver(); err != nil {
 		return err
 	}
 
-	if err = s.Repo.SaveCheckPadItem(ctx, checkPadItem); err != nil {
+	if err = s.Repo.SaveGuestCheckItem(ctx, guestCheckItem); err != nil {
 		return err
 	}
 

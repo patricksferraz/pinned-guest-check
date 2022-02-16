@@ -1,4 +1,4 @@
-module github.com/c-4u/check-pad
+module github.com/c-4u/guest-check
 
 go 1.17
 

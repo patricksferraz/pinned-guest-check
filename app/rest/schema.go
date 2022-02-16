@@ -16,7 +16,7 @@ type IDResponse struct {
 	ID string `json:"id"`
 }
 
-type Customer struct {
+type Guest struct {
 	Base `json:",inline"`
 }
 
@@ -24,13 +24,13 @@ type Place struct {
 	Base `json:",inline"`
 }
 
-type CreateCheckPadRequest struct {
-	Local      string `json:"local"`
-	CustomerID string `json:"customer_id"`
-	PlaceID    string `json:"place_id"`
+type CreateGuestCheckRequest struct {
+	Local   string `json:"local"`
+	GuestID string `json:"guest_id"`
+	PlaceID string `json:"place_id"`
 }
 
-type CheckPad struct {
+type GuestCheck struct {
 	Base           `json:",inline"`
 	TotalPrice     float64 `json:"total_price,omitempty"`
 	TotalDiscount  float64 `json:"total_discount,omitempty"`
@@ -38,15 +38,15 @@ type CheckPad struct {
 	Status         int     `json:"status"`
 	CanceledReason string  `json:"canceled_reason,omitempty"`
 	Local          string  `json:"local"`
-	CustomerID     string  `json:"customer_id"`
+	GuestID        string  `json:"guest_id"`
 	PlaceID        string  `json:"place_id"`
 }
 
-type CancelCheckPadRequest struct {
+type CancelGuestCheckRequest struct {
 	CanceledReason string `json:"canceled_reason"`
 }
 
-type AddCheckPadItemRequest struct {
+type AddGuestCheckItemRequest struct {
 	Name      string  `json:"name"`
 	Code      int     `json:"code"`
 	Quantity  int     `json:"quantity"`
@@ -56,11 +56,11 @@ type AddCheckPadItemRequest struct {
 	Tag       string  `json:"tag"`
 }
 
-type CancelCheckPadItemRequest struct {
+type CancelGuestCheckItemRequest struct {
 	CanceledReason string `json:"canceled_reason"`
 }
 
-type CheckPadItem struct {
+type GuestCheckItem struct {
 	Base           `json:",inline"`
 	Status         int     `json:"status"`
 	CanceledReason string  `json:"canceled_reason,omitempty"`
@@ -73,7 +73,7 @@ type CheckPadItem struct {
 	FinalPrice     float64 `json:"final_price"`
 	Note           string  `json:"note,omitempty"`
 	Tag            string  `json:"tag"`
-	CheckPadID     string  `json:"check_pad_id"`
+	GuestCheckID   string  `json:"guest_check_id"`
 }
 
 type Attendant struct {

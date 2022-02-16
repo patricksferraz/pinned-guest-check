@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"github.com/c-4u/check-pad/domain/entity"
+	"github.com/c-4u/guest-check/domain/entity"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	_ "gorm.io/driver/sqlite"
@@ -41,10 +41,10 @@ func (p *PostgreSQL) Debug(enable bool) {
 
 func (p *PostgreSQL) Migrate() {
 	p.Db.AutoMigrate(
-		&entity.CheckPadItem{},
-		&entity.CheckPad{},
-		&entity.Customer{},
+		&entity.Guest{},
 		&entity.Place{},
 		&entity.Attendant{},
+		&entity.GuestCheck{},
+		&entity.GuestCheckItem{},
 	)
 }
