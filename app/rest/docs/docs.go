@@ -28,9 +28,9 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/check-pads": {
+        "/guest-checks": {
             "post": {
-                "description": "Router for create a new check pad",
+                "description": "Router for create a new guest check",
                 "consumes": [
                     "application/json"
                 ],
@@ -38,18 +38,18 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "create a new check pad",
-                "operationId": "createCheckPad",
+                "summary": "create a new guest check",
+                "operationId": "createGuestCheck",
                 "parameters": [
                     {
-                        "description": "JSON body for create a new check pad",
+                        "description": "JSON body for create a new guest check",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.CreateCheckPadRequest"
+                            "$ref": "#/definitions/rest.CreateGuestCheckRequest"
                         }
                     }
                 ],
@@ -75,9 +75,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}": {
+        "/guest-checks/{guest_check_id}": {
             "get": {
-                "description": "Router for find a check pad",
+                "description": "Router for find a gust check",
                 "consumes": [
                     "application/json"
                 ],
@@ -85,15 +85,15 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "find a check pad",
-                "operationId": "findCheckPad",
+                "summary": "find a gust check",
+                "operationId": "findGuestCheck",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest pad ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     }
@@ -102,7 +102,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.CheckPad"
+                            "$ref": "#/definitions/rest.GuestCheck"
                         }
                     },
                     "400": {
@@ -120,9 +120,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/cancel": {
+        "/guest-checks/{guest_check_id}/cancel": {
             "post": {
-                "description": "Router for cancel a check pad",
+                "description": "Router for cancel a guest check",
                 "consumes": [
                     "application/json"
                 ],
@@ -130,25 +130,25 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "cancel a check pad",
-                "operationId": "cancelCheckPad",
+                "summary": "cancel a guest check",
+                "operationId": "cancelGuestCheck",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "JSON body for cancel a check pad",
+                        "description": "JSON body for cancel a guest check",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.CancelCheckPadRequest"
+                            "$ref": "#/definitions/rest.CancelGuestCheckRequest"
                         }
                     }
                 ],
@@ -174,9 +174,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/items": {
+        "/guest-checks/{guest_check_id}/items": {
             "post": {
-                "description": "Router for add a check pad item",
+                "description": "Router for add a guest check item",
                 "consumes": [
                     "application/json"
                 ],
@@ -184,25 +184,25 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "add a check pad item",
-                "operationId": "addCheckPadItem",
+                "summary": "add a guest check item",
+                "operationId": "addGuestCheckItem",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "JSON body for add a new check pad item",
+                        "description": "JSON body for add a new guest check item",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.AddCheckPadItemRequest"
+                            "$ref": "#/definitions/rest.AddGuestCheckItemRequest"
                         }
                     }
                 ],
@@ -228,9 +228,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/items/{check_pad_item_id}": {
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}": {
             "get": {
-                "description": "Router for find a check pad item",
+                "description": "Router for find a guest check item",
                 "consumes": [
                     "application/json"
                 ],
@@ -238,22 +238,22 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "find a check pad item",
-                "operationId": "findCheckPadItem",
+                "summary": "find a guest check item",
+                "operationId": "findGuestCheckItem",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Check pad item ID",
-                        "name": "check_pad_item_id",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
                         "in": "path",
                         "required": true
                     }
@@ -262,7 +262,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.CheckPadItem"
+                            "$ref": "#/definitions/rest.GuestCheckItem"
                         }
                     },
                     "400": {
@@ -280,9 +280,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/items/{check_pad_item_id}/cancel": {
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}/cancel": {
             "post": {
-                "description": "Router for cancel a check pad item",
+                "description": "Router for cancel a guest check item",
                 "consumes": [
                     "application/json"
                 ],
@@ -290,32 +290,32 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "cancel a check pad item",
-                "operationId": "cancelCheckPadItem",
+                "summary": "cancel a guest check item",
+                "operationId": "cancelGuestCheckItem",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Check pad item ID",
-                        "name": "check_pad_item_id",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "JSON body for cancel a check pad item",
+                        "description": "JSON body for cancel a guest check item",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.CancelCheckPadItemRequest"
+                            "$ref": "#/definitions/rest.CancelGuestCheckItemRequest"
                         }
                     }
                 ],
@@ -341,9 +341,9 @@ var doc = `{
                 }
             }
         },
-        "/check-pads/{check_pad_id}/wait-payment": {
+        "/guest-checks/{guest_check_id}/wait-payment": {
             "post": {
-                "description": "Router for wait payment a check pad",
+                "description": "Router for wait payment a guest check",
                 "consumes": [
                     "application/json"
                 ],
@@ -351,15 +351,15 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Check Pad"
+                    "Guest Check"
                 ],
-                "summary": "wait payment a check pad",
-                "operationId": "waitPaymentCheckPad",
+                "summary": "wait payment a guest check",
+                "operationId": "waitPaymentGuestCheck",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Check pad ID",
-                        "name": "check_pad_id",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
                         "in": "path",
                         "required": true
                     }
@@ -388,7 +388,7 @@ var doc = `{
         }
     },
     "definitions": {
-        "rest.AddCheckPadItemRequest": {
+        "rest.AddGuestCheckItemRequest": {
             "type": "object",
             "properties": {
                 "code": {
@@ -414,7 +414,7 @@ var doc = `{
                 }
             }
         },
-        "rest.CancelCheckPadItemRequest": {
+        "rest.CancelGuestCheckItemRequest": {
             "type": "object",
             "properties": {
                 "canceled_reason": {
@@ -422,7 +422,7 @@ var doc = `{
                 }
             }
         },
-        "rest.CancelCheckPadRequest": {
+        "rest.CancelGuestCheckRequest": {
             "type": "object",
             "properties": {
                 "canceled_reason": {
@@ -430,7 +430,21 @@ var doc = `{
                 }
             }
         },
-        "rest.CheckPad": {
+        "rest.CreateGuestCheckRequest": {
+            "type": "object",
+            "properties": {
+                "guest_id": {
+                    "type": "string"
+                },
+                "local": {
+                    "type": "string"
+                },
+                "place_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.GuestCheck": {
             "type": "object",
             "properties": {
                 "canceled_reason": {
@@ -439,11 +453,11 @@ var doc = `{
                 "created_at": {
                     "type": "string"
                 },
-                "customer_id": {
-                    "type": "string"
-                },
                 "final_price": {
                     "type": "number"
+                },
+                "guest_id": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -468,13 +482,10 @@ var doc = `{
                 }
             }
         },
-        "rest.CheckPadItem": {
+        "rest.GuestCheckItem": {
             "type": "object",
             "properties": {
                 "canceled_reason": {
-                    "type": "string"
-                },
-                "check_pad_id": {
                     "type": "string"
                 },
                 "code": {
@@ -488,6 +499,9 @@ var doc = `{
                 },
                 "final_price": {
                     "type": "number"
+                },
+                "guest_check_id": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "string"
@@ -514,20 +528,6 @@ var doc = `{
                     "type": "number"
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "rest.CreateCheckPadRequest": {
-            "type": "object",
-            "properties": {
-                "customer_id": {
-                    "type": "string"
-                },
-                "local": {
-                    "type": "string"
-                },
-                "place_id": {
                     "type": "string"
                 }
             }
@@ -574,8 +574,8 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "",
 	BasePath:    "/api/v1",
 	Schemes:     []string{},
-	Title:       "Check Pad Swagger API",
-	Description: "Swagger API for Check Pad Service.",
+	Title:       "Guest Check Swagger API",
+	Description: "Swagger API for Guest Check Service.",
 }
 
 type s struct{}

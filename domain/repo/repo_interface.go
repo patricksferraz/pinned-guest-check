@@ -3,25 +3,25 @@ package repo
 import (
 	"context"
 
-	"github.com/c-4u/check-pad/domain/entity"
+	"github.com/c-4u/guest-check/domain/entity"
 )
 
 type RepoInterface interface {
-	CreateCustomer(ctx context.Context, customer *entity.Customer) error
-	FindCustomer(ctx context.Context, customerID *string) (*entity.Customer, error)
-	SaveCustomer(ctx context.Context, customer *entity.Customer) error
+	CreateGuest(ctx context.Context, guest *entity.Guest) error
+	FindGuest(ctx context.Context, guestID *string) (*entity.Guest, error)
+	SaveGuest(ctx context.Context, guest *entity.Guest) error
 
 	CreatePlace(ctx context.Context, place *entity.Place) error
 	FindPlace(ctx context.Context, placeID *string) (*entity.Place, error)
 	SavePlace(ctx context.Context, place *entity.Place) error
 
-	CreateCheckPad(ctx context.Context, checkPad *entity.CheckPad) error
-	FindCheckPad(ctx context.Context, checkPadID *string) (*entity.CheckPad, error)
-	SaveCheckPad(ctx context.Context, checkPad *entity.CheckPad) error
+	CreateGuestCheck(ctx context.Context, guestCheck *entity.GuestCheck) error
+	FindGuestCheck(ctx context.Context, guestCheckID *string) (*entity.GuestCheck, error)
+	SaveGuestCheck(ctx context.Context, guestCheck *entity.GuestCheck) error
 
-	CreateCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
-	FindCheckPadItem(ctx context.Context, checkPadID, checkPadItemID *string) (*entity.CheckPadItem, error)
-	SaveCheckPadItem(ctx context.Context, checkPadItem *entity.CheckPadItem) error
+	CreateGuestCheckItem(ctx context.Context, guestCheckItem *entity.GuestCheckItem) error
+	FindGuestCheckItem(ctx context.Context, guestCheckID, guestCheckItemID *string) (*entity.GuestCheckItem, error)
+	SaveGuestCheckItem(ctx context.Context, guestCheckItem *entity.GuestCheckItem) error
 
 	CreateAttendant(ctx context.Context, attendant *entity.Attendant) error
 	FindAttendant(ctx context.Context, attendantID *string) (*entity.Attendant, error)

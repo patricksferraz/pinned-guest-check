@@ -1,4 +1,4 @@
-name: CheckPad - (CI/CD)
+name: GuestCheck - (CI/CD)
 
 on:
   pull_request:

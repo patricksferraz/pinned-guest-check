@@ -22,23 +22,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/c-4u/check-pad">
+  <a href="https://github.com/c-4u/guest-check">
     <img src="img/logo.png" alt="Logo" width="100" height="100">
   </a>
 
-  <h3 align="center">Check Pad</h3>
+  <h3 align="center">Guest Check</h3>
 
   <p align="center">
     Microservice for time recording
     <br />
-    <a href="https://github.com/c-4u/check-pad"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/c-4u/guest-check"><strong>Explore the docs »</strong></a>
     <!-- <br />
     <br />
-    <a href="https://github.com/c-4u/check-pad">View Demo</a>
+    <a href="https://github.com/c-4u/guest-check">View Demo</a>
     ·
-    <a href="https://github.com/c-4u/check-pad">Report Bug</a>
+    <a href="https://github.com/c-4u/guest-check">Report Bug</a>
     ·
-    <a href="https://github.com/c-4u/check-pad">Request Feature</a>-->
+    <a href="https://github.com/c-4u/guest-check">Request Feature</a>-->
   </p>
 </p>
 
@@ -71,7 +71,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Check pad is a microservice for pinned soluction providing in the application layer the communication by REST and gRPC.
+Guest check is a microservice for pinned soluction providing in the application layer the communication by REST and gRPC.
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 <!--
@@ -114,7 +114,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_ --
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/c-4u/check-pad/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/c-4u/guest-check/issues) for a list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -150,7 +150,7 @@ Any contributions you make are **greatly appreciated**.
 1. Clone the repo
 
    ```sh
-   git clone https://github.com/c-4u/check-pad.git
+   git clone https://github.com/c-4u/guest-check.git
    ```
 
 2. Run
@@ -183,7 +183,7 @@ Any contributions you make are **greatly appreciated**.
 
 Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
 
-Project Link: [check-pad](https://github.com/c-4u/check-pad)
+Project Link: [guest-check](https://github.com/c-4u/guest-check)
 
 <!-- ACKNOWLEDGEMENTS -->
 <!-- ## Acknowledgements

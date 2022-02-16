@@ -3,10 +3,10 @@ package kafka
 import (
 	"fmt"
 
-	"github.com/c-4u/check-pad/domain/service"
-	"github.com/c-4u/check-pad/infra/client/kafka"
-	"github.com/c-4u/check-pad/infra/db"
-	"github.com/c-4u/check-pad/infra/repo"
+	"github.com/c-4u/guest-check/domain/service"
+	"github.com/c-4u/guest-check/infra/client/kafka"
+	"github.com/c-4u/guest-check/infra/db"
+	"github.com/c-4u/guest-check/infra/repo"
 )
 
 func StartKafkaServer(pg *db.PostgreSQL, kc *kafka.KafkaConsumer, kp *kafka.KafkaProducer) {

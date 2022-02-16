@@ -12,6 +12,6 @@ type Config struct {
 
 	Kafka struct {
 		Servers *string `env:"KAFKA_BOOTSTRAP_SERVERS,default=kafka:9092"`
-		GroupId *string `env:"KAFKA_CONSUMER_GROUP_ID,default=check-pad"`
+		GroupId *string `env:"KAFKA_CONSUMER_GROUP_ID,default=guest-check"`
 	}
 }

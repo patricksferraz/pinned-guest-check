@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: check-pad
+  name: guest-check
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: check-pad
+      app: guest-check
   template:
     metadata:
       labels:
-        app: check-pad
+        app: guest-check
     spec:
       containers:
-      - name: check-pad
-        image: ghcr.io/c-4u/check-pad
+      - name: guest-check
+        image: ghcr.io/c-4u/guest-check
         ports:
         - name: rest
           containerPort: 8080
         envFrom:
           - secretRef:
-              name: check-pad-secret
+              name: guest-check-secret
         resources:
           limits:
             memory: "128Mi"

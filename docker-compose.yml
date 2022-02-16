@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  check-pad:
+  guest-check:
     build:
       context: .
       dockerfile: .docker/Dockerfile
@@ -15,7 +15,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - check-pad
+      - guest-check
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
 
@@ -32,7 +32,7 @@ services:
     ports:
       - $DB_PORT:5432
     networks:
-      - check-pad
+      - guest-check
 
   pgadmin:
     image: adminer:4.8.1
@@ -42,12 +42,12 @@ services:
     depends_on:
       - postgres
     networks:
-      - check-pad
+      - guest-check
 
 volumes:
   pgdata:
     driver: local
 
 networks:
-  check-pad:
+  guest-check:
     driver: bridge

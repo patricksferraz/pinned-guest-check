@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: check-pad
+  name: guest-check
 spec:
   type: ClusterIP
   selector:
-    app: check-pad
+    app: guest-check
   ports:
   - name: rest
     port: 8080
