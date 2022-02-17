@@ -6,8 +6,8 @@ type openGuestCheckMsg struct {
 }
 
 type OpenGuestCheck struct {
-	Event `json:",inline"`
-	Msg   *openGuestCheckMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *openGuestCheckMsg `json:"msg" valid:"required"`
 }
 
 type payGuestCheckMsg struct {
@@ -15,6 +15,6 @@ type payGuestCheckMsg struct {
 }
 
 type PayGuestCheck struct {
-	Event `json:",inline"`
-	Msg   *payGuestCheckMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *payGuestCheckMsg `json:"msg" valid:"required"`
 }

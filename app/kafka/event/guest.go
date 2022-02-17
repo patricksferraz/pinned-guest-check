@@ -1,10 +1,10 @@
 package event
 
 type createGuestMsg struct {
-	GuestID *string `json:"guest_id" valid:"uuid"`
+	ID *string `json:"id" valid:"uuid"`
 }
 
 type Guest struct {
-	Event `json:",inline"`
-	Msg   *createGuestMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *createGuestMsg `json:"msg" valid:"required"`
 }

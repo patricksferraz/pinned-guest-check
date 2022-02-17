@@ -11,12 +11,9 @@ import (
 	"runtime"
 
 	"github.com/Netflix/go-env"
-	appKafka "github.com/c-4u/guest-check/app/kafka"
 	"github.com/c-4u/guest-check/app/rest"
 	"github.com/c-4u/guest-check/infra/client/kafka"
-	"github.com/c-4u/guest-check/infra/client/kafka/topic"
 	"github.com/c-4u/guest-check/infra/db"
-	"github.com/c-4u/guest-check/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -41,19 +38,14 @@ func restCmd() *cobra.Command {
 				log.Fatal(err)
 			}
 
-			if utils.GetEnv("DB_DEBUG", "false") == "true" {
+			if *conf.Db.Debug {
 				pg.Debug(true)
 			}
 
-			if utils.GetEnv("DB_MIGRATE", "false") == "true" {
+			if *conf.Db.Migrate {
 				pg.Migrate()
 			}
 			defer pg.Db.Close()
-
-			kc, err := kafka.NewKafkaConsumer(*conf.Kafka.Servers, *conf.Kafka.GroupId, topic.CONSUMER_TOPICS)
-			if err != nil {
-				log.Fatal("cannot start kafka consumer", err)
-			}
 
 			deliveryChan := make(chan ckafka.Event)
 			kp, err := kafka.NewKafkaProducer(*conf.Kafka.Servers, deliveryChan)
@@ -62,7 +54,6 @@ func restCmd() *cobra.Command {
 			}
 
 			go kp.DeliveryReport()
-			go appKafka.StartKafkaServer(pg, kc, kp)
 			rest.StartRestServer(pg, kp, *conf.RestPort)
 		},
 	}

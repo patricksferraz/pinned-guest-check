@@ -7,8 +7,8 @@ type cancelGuestCheckItemMsg struct {
 }
 
 type CancelGuestCheckItem struct {
-	Event `json:",inline"`
-	Msg   *cancelGuestCheckItemMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *cancelGuestCheckItemMsg `json:"msg" valid:"required"`
 }
 
 type prepareGuestCheckItemMsg struct {
@@ -17,8 +17,8 @@ type prepareGuestCheckItemMsg struct {
 }
 
 type PrepareGuestCheckItem struct {
-	Event `json:",inline"`
-	Msg   *prepareGuestCheckItemMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *prepareGuestCheckItemMsg `json:"msg" valid:"required"`
 }
 
 type readyGuestCheckItemMsg struct {
@@ -27,8 +27,8 @@ type readyGuestCheckItemMsg struct {
 }
 
 type ReadyGuestCheckItem struct {
-	Event `json:",inline"`
-	Msg   *readyGuestCheckItemMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *readyGuestCheckItemMsg `json:"msg" valid:"required"`
 }
 
 type forwardGuestCheckItemMsg struct {
@@ -37,8 +37,8 @@ type forwardGuestCheckItemMsg struct {
 }
 
 type ForwardGuestCheckItem struct {
-	Event `json:",inline"`
-	Msg   *forwardGuestCheckItemMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *forwardGuestCheckItemMsg `json:"msg" valid:"required"`
 }
 
 type deliverGuestCheckItemMsg struct {
@@ -47,6 +47,6 @@ type deliverGuestCheckItemMsg struct {
 }
 
 type DeliverGuestCheckItem struct {
-	Event `json:",inline"`
-	Msg   *deliverGuestCheckItemMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *deliverGuestCheckItemMsg `json:"msg" valid:"required"`
 }
