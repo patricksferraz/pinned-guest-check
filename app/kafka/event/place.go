@@ -1,10 +1,10 @@
 package event
 
 type createPlaceMsg struct {
-	PlaceID *string `json:"place_id" valid:"uuid"`
+	ID *string `json:"id" valid:"uuid"`
 }
 
 type Place struct {
-	Event `json:",inline"`
-	Msg   *createPlaceMsg `json:"msg"`
+	Event `json:",inline" valid:"required"`
+	Msg   *createPlaceMsg `json:"msg" valid:"required"`
 }

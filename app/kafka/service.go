@@ -233,7 +233,7 @@ func (p *KafkaProcessor) createGuest(msg *ckafka.Message) error {
 		return err
 	}
 
-	_, err = p.Service.CreateGuest(context.TODO(), e.Msg.GuestID)
+	_, err = p.Service.CreateGuest(context.TODO(), e.Msg.ID)
 	if err != nil {
 		return err
 	}
@@ -248,7 +248,7 @@ func (p *KafkaProcessor) createPlace(msg *ckafka.Message) error {
 		return err
 	}
 
-	_, err = p.Service.CreatePlace(context.TODO(), e.Msg.PlaceID)
+	_, err = p.Service.CreatePlace(context.TODO(), e.Msg.ID)
 	if err != nil {
 		return err
 	}
@@ -263,7 +263,7 @@ func (p *KafkaProcessor) createAttendant(msg *ckafka.Message) error {
 		return err
 	}
 
-	_, err = p.Service.CreateAttendant(context.TODO(), e.Msg.AttendantID)
+	_, err = p.Service.CreateAttendant(context.TODO(), e.Msg.ID)
 	if err != nil {
 		return err
 	}
