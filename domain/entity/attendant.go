@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/c-4u/guest-check/utils"
+	"github.com/c-4u/pinned-guest-check/utils"
 )
 
 func init() {

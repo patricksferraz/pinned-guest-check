@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/c-4u/guest-check/app/kafka/event"
-	"github.com/c-4u/guest-check/domain/service"
-	"github.com/c-4u/guest-check/infra/client/kafka"
-	"github.com/c-4u/guest-check/infra/client/kafka/topic"
+	"github.com/c-4u/pinned-guest-check/app/kafka/event"
+	"github.com/c-4u/pinned-guest-check/domain/service"
+	"github.com/c-4u/pinned-guest-check/infra/client/kafka"
+	"github.com/c-4u/pinned-guest-check/infra/client/kafka/topic"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
