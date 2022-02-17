@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: guest-check
-        image: ghcr.io/c-4u/guest-check
+        image: ghcr.io/c-4u/pinned-guest-check
         ports:
         - name: rest
           containerPort: 8080
