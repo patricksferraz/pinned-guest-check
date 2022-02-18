@@ -47,13 +47,13 @@ type CancelGuestCheckRequest struct {
 }
 
 type AddGuestCheckItemRequest struct {
-	Name      string  `json:"name"`
-	Code      int     `json:"code"`
-	Quantity  int     `json:"quantity"`
-	UnitPrice float64 `json:"unit_price"`
-	Discount  float64 `json:"discount,omitempty"`
-	Note      string  `json:"note,omitempty"`
-	Tag       string  `json:"tag"`
+	Name      string   `json:"name"`
+	Code      int      `json:"code"`
+	Quantity  int      `json:"quantity"`
+	UnitPrice float64  `json:"unit_price"`
+	Discount  float64  `json:"discount,omitempty"`
+	Note      string   `json:"note,omitempty"`
+	Tags      []string `json:"tags"`
 }
 
 type CancelGuestCheckItemRequest struct {

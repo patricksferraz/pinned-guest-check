@@ -189,7 +189,7 @@ func (t *RestService) AddGuestCheckItem(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: err.Error()})
 	}
 
-	guestCheckItemID, err := t.Service.AddGuestCheckItem(c.Context(), &req.Name, &req.Code, &req.Quantity, &req.UnitPrice, &req.Discount, &req.Note, &req.Tag, &guestCheckID)
+	guestCheckItemID, err := t.Service.AddGuestCheckItem(c.Context(), &req.Name, &req.Code, &req.Quantity, &req.UnitPrice, &req.Discount, &req.Note, &req.Tags, &guestCheckID)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
 	}

@@ -186,7 +186,7 @@ func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string) error
 	return nil
 }
 
-func (s *Service) AddGuestCheckItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *string, guestCheckID *string) (*string, error) {
+func (s *Service) AddGuestCheckItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *[]string, guestCheckID *string) (*string, error) {
 	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return nil, err
