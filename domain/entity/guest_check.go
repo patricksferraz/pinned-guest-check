@@ -13,24 +13,6 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-type WaitPaymentGuestCheck struct {
-	GuestCheckID *string `json:"guest_check_id" valid:"uuid"`
-}
-
-func (e *WaitPaymentGuestCheck) IsValid() error {
-	_, err := govalidator.ValidateStruct(e)
-	return err
-}
-
-type CancelGuestCheck struct {
-	GuestCheckID *string `json:"guest_check_id" valid:"uuid"`
-}
-
-func (e *CancelGuestCheck) IsValid() error {
-	_, err := govalidator.ValidateStruct(e)
-	return err
-}
-
 type GuestCheck struct {
 	Base           `json:",inline" valid:"-"`
 	TotalPrice     *float64          `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
@@ -95,40 +77,40 @@ func (e *GuestCheck) processPrice() error {
 	return err
 }
 
-func (e *GuestCheck) WaitPayment() (*WaitPaymentGuestCheck, error) {
+func (e *GuestCheck) WaitPayment() error {
 	if e.Status == GUEST_CHECK_AWAITING_PAYMENT {
-		return nil, errors.New("the guest check has already been awaiting payment")
+		return errors.New("the guest check has already been awaiting payment")
 	}
 
 	e.Status = GUEST_CHECK_AWAITING_PAYMENT
 	e.UpdatedAt = utils.PTime(time.Now())
 
 	if err := e.IsValid(); err != nil {
-		return nil, err
+		return err
 	}
 
-	return &WaitPaymentGuestCheck{GuestCheckID: e.ID}, nil
+	return nil
 }
 
-func (e *GuestCheck) Cancel(canceledReason *string) (*CancelGuestCheck, error) {
+func (e *GuestCheck) Cancel(canceledReason *string) error {
 	if e.Status == GUEST_CHECK_CANCELED {
-		return nil, errors.New("the guest check has already been canceled")
+		return errors.New("the guest check has already been canceled")
 	}
 
 	if e.Status == GUEST_CHECK_PAID {
-		return nil, errors.New("the paid guest check cannot be canceled")
+		return errors.New("the paid guest check cannot be canceled")
 	}
 
 	// TODO: adds the best way
 	if len(e.items) > 0 || len(e.Items) > 0 {
-		return nil, errors.New("the guest check cannot be canceled")
+		return errors.New("the guest check cannot be canceled")
 	}
 
 	e.Status = GUEST_CHECK_CANCELED
 	e.CanceledReason = canceledReason
 	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.IsValid()
-	return &CancelGuestCheck{GuestCheckID: e.ID}, err
+	return err
 }
 
 func (e *GuestCheck) Pay() error {

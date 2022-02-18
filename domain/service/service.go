@@ -117,28 +117,12 @@ func (s *Service) WaitPaymentGuestCheck(ctx context.Context, guestCheckID *strin
 		return err
 	}
 
-	wpMsg, err := guestCheck.WaitPayment()
+	err = guestCheck.WaitPayment()
 	if err != nil {
 		return err
 	}
 
 	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
-		return err
-	}
-
-	// TODO: adds retry
-	event, err := entity.NewEvent(wpMsg)
-	if err != nil {
-		return err
-	}
-
-	eMsg, err := event.ToJson()
-	if err != nil {
-		return err
-	}
-
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.WAIT_PAYMENT_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
-	if err != nil {
 		return err
 	}
 
@@ -151,28 +135,12 @@ func (s *Service) CancelGuestCheck(ctx context.Context, guestCheckID, canceledRe
 		return err
 	}
 
-	cMsg, err := guestCheck.Cancel(canceledReason)
+	err = guestCheck.Cancel(canceledReason)
 	if err != nil {
 		return err
 	}
 
 	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
-		return err
-	}
-
-	// TODO: adds retry
-	event, err := entity.NewEvent(cMsg)
-	if err != nil {
-		return err
-	}
-
-	eMsg, err := event.ToJson()
-	if err != nil {
-		return err
-	}
-
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.CANCEL_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
-	if err != nil {
 		return err
 	}
 
@@ -241,22 +209,6 @@ func (s *Service) AddGuestCheckItem(ctx context.Context, name *string, code, qua
 	}
 
 	err = s.Repo.SaveGuestCheck(ctx, guestCheck)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: adds retry
-	event, err := entity.NewEvent(guestCheckItem)
-	if err != nil {
-		return nil, err
-	}
-
-	eMsg, err := event.ToJson()
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.NEW_GUEST_CHECK_ITEM), utils.PString(string(eMsg)), guestCheck.ID)
 	if err != nil {
 		return nil, err
 	}

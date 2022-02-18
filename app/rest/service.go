@@ -50,7 +50,7 @@ func (t *RestService) CreateGuestCheck(c *fiber.Ctx) error {
 // @Description Router for find a gust check
 // @Accept json
 // @Produce json
-// @Param guest_check_id path string true "Guest pad ID"
+// @Param guest_check_id path string true "Guest check ID"
 // @Success 200 {object} GuestCheck
 // @Failure 400 {object} HTTPResponse
 // @Failure 403 {object} HTTPResponse
@@ -127,6 +127,34 @@ func (t *RestService) CancelGuestCheck(c *fiber.Ctx) error {
 	}
 
 	err := t.Service.CancelGuestCheck(c.Context(), &guestCheckID, &req.CanceledReason)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+}
+
+// PayGuestCheck godoc
+// @Summary pay a guest check
+// @ID payGuestCheck
+// @Tags Guest Check
+// @Description Router for pay a guest check
+// @Accept json
+// @Produce json
+// @Param guest_check_id path string true "Guest check ID"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks/{guest_check_id}/pay [post]
+func (t *RestService) PayGuestCheck(c *fiber.Ctx) error {
+	guestCheckID := c.Params("guest_check_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_id is not a valid uuid",
+		})
+	}
+
+	err := t.Service.PayGuestCheck(c.Context(), &guestCheckID)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
 	}
@@ -219,7 +247,7 @@ func (t *RestService) FindGuestCheckItem(c *fiber.Ctx) error {
 // @Failure 400 {object} HTTPResponse
 // @Failure 403 {object} HTTPResponse
 // @Router /guest-checks/{guest_check_id}/items/{guest_check_item_id}/cancel [post]
-func (t *RestService) CancelGuestCheckItem(c *fiber.Ctx) error { // TODO: add in rest->kafka<-kafka resources
+func (t *RestService) CancelGuestCheckItem(c *fiber.Ctx) error {
 	var req CancelGuestCheckItemRequest
 
 	guestCheckID := c.Params("guest_check_id")
@@ -241,6 +269,150 @@ func (t *RestService) CancelGuestCheckItem(c *fiber.Ctx) error { // TODO: add in
 	}
 
 	err := t.Service.CancelGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID, &req.CanceledReason)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+}
+
+// PrepareGuestCheckItem godoc
+// @Summary prepare a guest check item
+// @ID prepareGuestCheckItem
+// @Tags Guest Check
+// @Description Router for prepare a guest check item
+// @Accept json
+// @Produce json
+// @Param guest_check_id path string true "Guest check ID"
+// @Param guest_check_item_id path string true "Guest check item ID"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks/{guest_check_id}/items/{guest_check_item_id}/prepare [post]
+func (t *RestService) PrepareGuestCheckItem(c *fiber.Ctx) error {
+	guestCheckID := c.Params("guest_check_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_id is not a valid uuid",
+		})
+	}
+
+	guestCheckItemID := c.Params("guest_check_item_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_item_id is not a valid uuid",
+		})
+	}
+
+	err := t.Service.PrepareGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+}
+
+// ReadyGuestCheckItem godoc
+// @Summary ready a guest check item
+// @ID readyGuestCheckItem
+// @Tags Guest Check
+// @Description Router for ready a guest check item
+// @Accept json
+// @Produce json
+// @Param guest_check_id path string true "Guest check ID"
+// @Param guest_check_item_id path string true "Guest check item ID"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks/{guest_check_id}/items/{guest_check_item_id}/ready [post]
+func (t *RestService) ReadyGuestCheckItem(c *fiber.Ctx) error {
+	guestCheckID := c.Params("guest_check_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_id is not a valid uuid",
+		})
+	}
+
+	guestCheckItemID := c.Params("guest_check_item_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_item_id is not a valid uuid",
+		})
+	}
+
+	err := t.Service.ReadyGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+}
+
+// ForwardGuestCheckItem godoc
+// @Summary forward a guest check item
+// @ID forwardGuestCheckItem
+// @Tags Guest Check
+// @Description Router for forward a guest check item
+// @Accept json
+// @Produce json
+// @Param guest_check_id path string true "Guest check ID"
+// @Param guest_check_item_id path string true "Guest check item ID"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks/{guest_check_id}/items/{guest_check_item_id}/forward [post]
+func (t *RestService) ForwardGuestCheckItem(c *fiber.Ctx) error {
+	guestCheckID := c.Params("guest_check_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_id is not a valid uuid",
+		})
+	}
+
+	guestCheckItemID := c.Params("guest_check_item_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_item_id is not a valid uuid",
+		})
+	}
+
+	err := t.Service.ForwardGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+}
+
+// DeliverGuestCheckItem godoc
+// @Summary deliver a guest check item
+// @ID deliverGuestCheckItem
+// @Tags Guest Check
+// @Description Router for deliver a guest check item
+// @Accept json
+// @Produce json
+// @Param guest_check_id path string true "Guest check ID"
+// @Param guest_check_item_id path string true "Guest check item ID"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks/{guest_check_id}/items/{guest_check_item_id}/deliver [post]
+func (t *RestService) DeliverGuestCheckItem(c *fiber.Ctx) error {
+	guestCheckID := c.Params("guest_check_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_id is not a valid uuid",
+		})
+	}
+
+	guestCheckItemID := c.Params("guest_check_item_id")
+	if !govalidator.IsUUIDv4(guestCheckID) {
+		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
+			Msg: "guest_check_item_id is not a valid uuid",
+		})
+	}
+
+	err := t.Service.DeliverGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
 	}

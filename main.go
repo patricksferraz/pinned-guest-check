@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 Coding4u <contato@coding4u.com.br>
+Copyright © 2022 Coding4u <oi@coding4u.com.br>
 
 */
 package main

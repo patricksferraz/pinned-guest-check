@@ -46,11 +46,16 @@ func StartRestServer(pg *db.PostgreSQL, kp *kafka.KafkaProducer, port int) {
 		guestCheck.Get("/:guest_check_id", restService.FindGuestCheck)
 		guestCheck.Post("/:guest_check_id/wait-payment", restService.WaitPaymentGuestCheck)
 		guestCheck.Post("/:guest_check_id/cancel", restService.CancelGuestCheck)
+		guestCheck.Post("/:guest_check_id/pay", restService.PayGuestCheck)
 
 		guestCheckItem := guestCheck.Group("/:guest_check_id/items")
 		guestCheckItem.Post("", restService.AddGuestCheckItem)
 		guestCheckItem.Get("/:guest_check_item_id", restService.FindGuestCheckItem)
 		guestCheckItem.Post("/:guest_check_item_id/cancel", restService.CancelGuestCheckItem)
+		guestCheckItem.Post("/:guest_check_item_id/prepare", restService.PrepareGuestCheckItem)
+		guestCheckItem.Post("/:guest_check_item_id/ready", restService.ReadyGuestCheckItem)
+		guestCheckItem.Post("/:guest_check_item_id/forward", restService.ForwardGuestCheckItem)
+		guestCheckItem.Post("/:guest_check_item_id/deliver", restService.DeliverGuestCheckItem)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
