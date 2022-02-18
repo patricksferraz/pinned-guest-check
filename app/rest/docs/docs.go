@@ -92,7 +92,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Guest pad ID",
+                        "description": "Guest check ID",
                         "name": "guest_check_id",
                         "in": "path",
                         "required": true
@@ -317,6 +317,259 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/rest.CancelGuestCheckItemRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}/deliver": {
+            "post": {
+                "description": "Router for deliver a guest check item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "deliver a guest check item",
+                "operationId": "deliverGuestCheckItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}/forward": {
+            "post": {
+                "description": "Router for forward a guest check item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "forward a guest check item",
+                "operationId": "forwardGuestCheckItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}/prepare": {
+            "post": {
+                "description": "Router for prepare a guest check item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "prepare a guest check item",
+                "operationId": "prepareGuestCheckItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest-checks/{guest_check_id}/items/{guest_check_item_id}/ready": {
+            "post": {
+                "description": "Router for ready a guest check item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "ready a guest check item",
+                "operationId": "readyGuestCheckItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Guest check item ID",
+                        "name": "guest_check_item_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/guest-checks/{guest_check_id}/pay": {
+            "post": {
+                "description": "Router for pay a guest check",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "pay a guest check",
+                "operationId": "payGuestCheck",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Guest check ID",
+                        "name": "guest_check_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {

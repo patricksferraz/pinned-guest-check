@@ -5,6 +5,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/c-4u/pinned-guest-check/utils"
+	"github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -24,12 +25,12 @@ type GuestCheckItem struct {
 	TotalPrice     *float64             `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
 	FinalPrice     *float64             `json:"final_price" gorm:"column:final_price;not null" valid:"-"`
 	Note           *string              `json:"note,omitempty" gorm:"column:note;type:varchar(255)" valid:"-"`
-	Tag            *string              `json:"tag" gorm:"column:tag;type:varchar(255)" valid:"-"`
+	Tags           pq.StringArray       `json:"tags" gorm:"column:tags;type:text[]" valid:"-"`
 	GuestCheckID   *string              `json:"guest_check_id" gorm:"column:guest_check_id;type:uuid;not null" valid:"uuid"`
 	GuestCheck     *GuestCheck          `json:"-" valid:"-"`
 }
 
-func NewGuestCheckItem(name *string, code, quantity *int, unitPrice *float64, discount *float64, note, tag *string, guestCheck *GuestCheck) (*GuestCheckItem, error) {
+func NewGuestCheckItem(name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *[]string, guestCheck *GuestCheck) (*GuestCheckItem, error) {
 	e := GuestCheckItem{
 		Name:         name,
 		Code:         code,
@@ -38,7 +39,7 @@ func NewGuestCheckItem(name *string, code, quantity *int, unitPrice *float64, di
 		UnitPrice:    unitPrice,
 		Discount:     discount,
 		Note:         note,
-		Tag:          tag,
+		Tags:         *tag,
 		GuestCheckID: guestCheck.ID,
 		GuestCheck:   guestCheck,
 	}
