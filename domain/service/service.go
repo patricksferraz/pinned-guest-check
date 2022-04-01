@@ -147,18 +147,18 @@ func (s *Service) CancelGuestCheck(ctx context.Context, guestCheckID, canceledRe
 	return nil
 }
 
-func (s *Service) OpenGuestCheck(ctx context.Context, guestCheckID, attendantID *string) error {
+func (s *Service) OpenGuestCheck(ctx context.Context, guestCheckID, employeeID *string) error {
 	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return err
 	}
 
-	attendant, err := s.Repo.FindAttendant(ctx, attendantID)
+	employee, err := s.Repo.FindEmployee(ctx, employeeID)
 	if err != nil {
 		return err
 	}
 
-	if err := guestCheck.Open(attendant); err != nil {
+	if err := guestCheck.Open(employee); err != nil {
 		return err
 	}
 
@@ -310,24 +310,24 @@ func (s *Service) DeliverGuestCheckItem(ctx context.Context, guestCheckID, guest
 	return nil
 }
 
-func (s *Service) CreateAttendant(ctx context.Context, attendantID *string) (*string, error) {
-	attendant, err := entity.NewAttendant(attendantID)
+func (s *Service) CreateEmployee(ctx context.Context, employeeID *string) (*string, error) {
+	employee, err := entity.NewEmployee(employeeID)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = s.Repo.CreateAttendant(ctx, attendant); err != nil {
+	if err = s.Repo.CreateEmployee(ctx, employee); err != nil {
 		return nil, err
 	}
 
-	return attendant.ID, nil
+	return employee.ID, nil
 }
 
-func (s *Service) FindAttendant(ctx context.Context, attendantID *string) (*entity.Attendant, error) {
-	attendant, err := s.Repo.FindAttendant(ctx, attendantID)
+func (s *Service) FindEmployee(ctx context.Context, employeeID *string) (*entity.Employee, error) {
+	employee, err := s.Repo.FindEmployee(ctx, employeeID)
 	if err != nil {
 		return nil, err
 	}
 
-	return attendant, nil
+	return employee, nil
 }

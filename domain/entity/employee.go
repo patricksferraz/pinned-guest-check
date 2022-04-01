@@ -11,13 +11,13 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-type Attendant struct {
+type Employee struct {
 	Base        `json:",inline" valid:"-"`
 	GuestChecks []*GuestCheck `json:"guest_checks" gorm:"ForeignKey:AttendantBy" valid:"-"`
 }
 
-func NewAttendant(id *string) (*Attendant, error) {
-	e := Attendant{}
+func NewEmployee(id *string) (*Employee, error) {
+	e := Employee{}
 	e.ID = id
 	e.CreatedAt = utils.PTime(time.Now())
 
@@ -29,7 +29,7 @@ func NewAttendant(id *string) (*Attendant, error) {
 	return &e, nil
 }
 
-func (e *Attendant) IsValid() error {
+func (e *Employee) IsValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }

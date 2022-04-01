@@ -25,8 +25,8 @@ type GuestCheck struct {
 	Guest          *Guest            `json:"-" valid:"-"`
 	PlaceID        *string           `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place            `json:"-" valid:"-"`
-	AttendantBy    *string           `json:"attendant_by" gorm:"column:attendant_by;type:uuid" valid:"uuid,optional"`
-	Attendant      *Attendant        `json:"-" valid:"-"`
+	AttendedBy     *string           `json:"attended_by" gorm:"column:attended_by;type:uuid" valid:"uuid,optional"`
+	Attendant      *Employee         `json:"-" valid:"-"`
 	Items          []*GuestCheckItem `json:"-" gorm:"ForeignKey:GuestCheckID" valid:"-"`
 	items          []*GuestCheckItem `json:"-" gorm:"-" valid:"-"`
 }
@@ -136,10 +136,10 @@ func (e *GuestCheck) AddItem(guestCheckItem *GuestCheckItem) error {
 	return err
 }
 
-func (e *GuestCheck) Open(attendant *Attendant) error {
+func (e *GuestCheck) Open(employee *Employee) error {
 	e.Status = GUEST_CHECK_OPENED
-	e.AttendantBy = attendant.ID
-	e.Attendant = attendant
+	e.AttendedBy = employee.ID
+	e.Attendant = employee
 	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.IsValid()
 	return err

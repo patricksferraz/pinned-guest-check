@@ -2,7 +2,7 @@ package event
 
 type openGuestCheckMsg struct {
 	GuestCheckID *string `json:"guest_check_id" valid:"uuid"`
-	AttendantID  *string `json:"attendant_id" valid:"uuid"`
+	EmployeeID   *string `json:"employee_id" valid:"uuid"`
 }
 
 type OpenGuestCheck struct {

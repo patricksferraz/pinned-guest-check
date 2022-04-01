@@ -43,7 +43,7 @@ func (p *PostgreSQL) Migrate() {
 	p.Db.AutoMigrate(
 		&entity.Guest{},
 		&entity.Place{},
-		&entity.Attendant{},
+		&entity.Employee{},
 		&entity.GuestCheck{},
 		&entity.GuestCheckItem{},
 	)

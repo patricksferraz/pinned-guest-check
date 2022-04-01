@@ -76,6 +76,6 @@ type GuestCheckItem struct {
 	GuestCheckID   string  `json:"guest_check_id"`
 }
 
-type Attendant struct {
+type Employee struct {
 	Base `json:",inline"`
 }

@@ -60,12 +60,12 @@ func (p *KafkaProcessor) processMessage(msg *ckafka.Message) error {
 			p.retry(msg)
 			return fmt.Errorf("create place, error %s", err)
 		}
-	// ATTENDANT
-	case topic.NEW_ATTENDANT:
-		err := p.createAttendant(msg)
+	// EMPLOYEE
+	case topic.NEW_EMPLOYEE:
+		err := p.createEmployee(msg)
 		if err != nil {
 			p.retry(msg)
-			return fmt.Errorf("create attendant, error %s", err)
+			return fmt.Errorf("create employee, error %s", err)
 		}
 	default:
 		return fmt.Errorf("not a valid topic %s", string(msg.Value))
@@ -91,7 +91,7 @@ func (p *KafkaProcessor) openGuestCheck(msg *ckafka.Message) error {
 		return err
 	}
 
-	err = p.Service.OpenGuestCheck(context.TODO(), e.Msg.GuestCheckID, e.Msg.AttendantID)
+	err = p.Service.OpenGuestCheck(context.TODO(), e.Msg.GuestCheckID, e.Msg.EmployeeID)
 	if err != nil {
 		return err
 	}
@@ -129,14 +129,14 @@ func (p *KafkaProcessor) createPlace(msg *ckafka.Message) error {
 	return nil
 }
 
-func (p *KafkaProcessor) createAttendant(msg *ckafka.Message) error {
-	e := &event.Attendant{}
+func (p *KafkaProcessor) createEmployee(msg *ckafka.Message) error {
+	e := &event.Employee{}
 	err := e.ParseJson(msg.Value, e)
 	if err != nil {
 		return err
 	}
 
-	_, err = p.Service.CreateAttendant(context.TODO(), e.Msg.ID)
+	_, err = p.Service.CreateEmployee(context.TODO(), e.Msg.ID)
 	if err != nil {
 		return err
 	}

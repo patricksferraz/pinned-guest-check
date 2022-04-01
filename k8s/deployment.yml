@@ -1,16 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guest-check
+  name: guest-check-v1
+  labels:
+    app: guest-check
+    version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: guest-check
+      version: v1
   template:
     metadata:
       labels:
         app: guest-check
+        version: v1
     spec:
       containers:
       - name: guest-check
