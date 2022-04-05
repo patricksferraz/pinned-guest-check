@@ -13,6 +13,10 @@ func PFloat64(f float64) *float64 {
 	return &f
 }
 
+func PBool(v bool) *bool {
+	return &v
+}
+
 func PInt(i int) *int {
 	return &i
 }

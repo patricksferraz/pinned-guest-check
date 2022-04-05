@@ -7,6 +7,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/c-4u/pinned-guest-check/utils"
 	uuid "github.com/satori/go.uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func init() {
@@ -21,20 +22,23 @@ type GuestCheck struct {
 	Status         GuestCheckStatus  `json:"status" gorm:"column:status;not null" valid:"guestCheckStatus"`
 	CanceledReason *string           `json:"canceled_reason,omitempty" gorm:"column:canceled_reason;type:varchar(255)" valid:"-"`
 	Local          *string           `json:"local" gorm:"column:local;type:varchar(255)" valid:"required"`
+	Token          *string           `json:"-" gorm:"column:token;type:varchar(25);not null" valid:"-"`
 	GuestID        *string           `json:"guest_id" gorm:"column:guest_id;type:uuid;not null" valid:"uuid"`
 	Guest          *Guest            `json:"-" valid:"-"`
 	PlaceID        *string           `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place            `json:"-" valid:"-"`
-	AttendedBy     *string           `json:"attended_by" gorm:"column:attended_by;type:uuid" valid:"uuid,optional"`
-	Attendant      *Employee         `json:"-" valid:"-"`
+	AttendedBy     *string           `json:"attended_by,omitempty" gorm:"column:attended_by;type:uuid" valid:"uuid,optional"`
+	Attendant      *Employee         `json:"-" gorm:"foreignKey:AttendedBy" valid:"-"`
 	Items          []*GuestCheckItem `json:"-" gorm:"ForeignKey:GuestCheckID" valid:"-"`
 	items          []*GuestCheckItem `json:"-" gorm:"-" valid:"-"`
 }
 
 func NewGuestCheck(local *string, guest *Guest, place *Place) (*GuestCheck, error) {
+	token := primitive.NewObjectID().Hex()
 	e := GuestCheck{
 		Status:  GUEST_CHECK_PENDING,
 		Local:   local,
+		Token:   &token,
 		GuestID: guest.ID,
 		Guest:   guest,
 		PlaceID: place.ID,
@@ -80,6 +84,10 @@ func (e *GuestCheck) processPrice() error {
 func (e *GuestCheck) WaitPayment() error {
 	if e.Status == GUEST_CHECK_AWAITING_PAYMENT {
 		return errors.New("the guest check has already been awaiting payment")
+	}
+
+	if e.Status != GUEST_CHECK_OPENED {
+		return errors.New("the guest check cannot wait payment")
 	}
 
 	e.Status = GUEST_CHECK_AWAITING_PAYMENT
@@ -143,4 +151,21 @@ func (e *GuestCheck) Open(employee *Employee) error {
 	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.IsValid()
 	return err
+}
+
+type SearchGuestChecks struct {
+	Pagination `json:",inline" valid:"-"`
+}
+
+func NewSearchGuestChecks(pagination *Pagination) (*SearchGuestChecks, error) {
+	e := SearchGuestChecks{}
+	e.PageToken = pagination.PageToken
+	e.PageSize = pagination.PageSize
+
+	err := e.IsValid()
+	if err != nil {
+		return nil, err
+	}
+
+	return &e, nil
 }

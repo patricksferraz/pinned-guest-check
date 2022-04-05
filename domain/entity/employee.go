@@ -13,7 +13,7 @@ func init() {
 
 type Employee struct {
 	Base        `json:",inline" valid:"-"`
-	GuestChecks []*GuestCheck `json:"guest_checks" gorm:"ForeignKey:AttendantBy" valid:"-"`
+	GuestChecks []*GuestCheck `json:"guest_checks" gorm:"ForeignKey:AttendedBy" valid:"-"`
 }
 
 func NewEmployee(id *string) (*Employee, error) {

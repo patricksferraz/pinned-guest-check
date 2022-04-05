@@ -20,6 +20,7 @@ spec:
       containers:
       - name: guest-check
         image: ghcr.io/c-4u/pinned-guest-check
+        imagePullPolicy: IfNotPresent
         ports:
         - name: rest
           containerPort: 8080

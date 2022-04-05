@@ -186,17 +186,23 @@ func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string) error
 	return nil
 }
 
-func (s *Service) AddGuestCheckItem(ctx context.Context, name *string, code, quantity *int, unitPrice *float64, discount *float64, note *string, tag *[]string, guestCheckID *string) (*string, error) {
+func (s *Service) AddGuestCheckItem(ctx context.Context, guestCheckID, note *string, itemCode, quantity *int) (*string, error) {
 	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return nil, err
 	}
 
-	guestCheckItem, err := entity.NewGuestCheckItem(name, code, quantity, unitPrice, discount, note, tag, guestCheck)
+	item, err := s.Repo.FindItemByCode(ctx, itemCode)
 	if err != nil {
 		return nil, err
 	}
 
+	guestCheckItem, err := entity.NewGuestCheckItem(item.Name, item.Code, quantity, item.Price, item.Discount, note, (*[]string)(item.Tags), guestCheck)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: change strategy
 	err = guestCheck.AddItem(guestCheckItem)
 	if err != nil {
 		return nil, err
@@ -330,4 +336,58 @@ func (s *Service) FindEmployee(ctx context.Context, employeeID *string) (*entity
 	}
 
 	return employee, nil
+}
+
+func (s *Service) CreateItem(ctx context.Context, id, name *string, code *int, price, discount *float64, available *bool, tags *[]string) (*string, error) {
+	item, err := entity.NewItem(id, name, code, price, discount, available, tags)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = s.Repo.CreateItem(ctx, item); err != nil {
+		return nil, err
+	}
+
+	return item.ID, nil
+}
+
+func (s *Service) UpdateItem(ctx context.Context, itemID, name *string, available *bool, price, discount *float64, tags *[]string) error {
+	item, err := s.Repo.FindItem(ctx, itemID)
+	if err != nil {
+		return err
+	}
+
+	if err = item.
+		SetName(name).
+		SetAvailable(available).
+		SetPrice(price).
+		SetDiscount(discount).
+		SetTags(tags).IsValid(); err != nil {
+		return err
+	}
+
+	if err = s.Repo.UpdateItem(ctx, item); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) SearchGuestChecks(ctx context.Context, pageToken *string, pageSize *int) ([]*entity.GuestCheck, *string, error) {
+	pagination, err := entity.NewPagination(pageToken, pageSize)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	searchGuestChecks, err := entity.NewSearchGuestChecks(pagination)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	guestChecks, nextPageToken, err := s.Repo.SearchGuestChecks(ctx, searchGuestChecks)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return guestChecks, nextPageToken, nil
 }

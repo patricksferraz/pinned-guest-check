@@ -9,8 +9,8 @@ import (
 	"github.com/c-4u/pinned-guest-check/infra/repo"
 )
 
-func StartKafkaServer(pg *db.PostgreSQL, kc *kafka.KafkaConsumer, kp *kafka.KafkaProducer) {
-	repository := repo.NewRepository(pg, kp)
+func StartKafkaServer(orm *db.DbOrm, kc *kafka.KafkaConsumer, kp *kafka.KafkaProducer) {
+	repository := repo.NewRepository(orm, kp)
 	service := service.NewService(repository)
 
 	fmt.Println("kafka pocessor has been started")

@@ -19,6 +19,7 @@ import (
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
+	"gorm.io/gorm/logger"
 )
 
 // allCmd represents the all command
@@ -35,19 +36,20 @@ func allCmd() *cobra.Command {
 		Short: "Run both gRPC and rest servers",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			pg, err := db.NewPostgreSQL(*conf.Db.DsnType, *conf.Db.Dsn)
+			l := logger.Error
+			if *conf.Db.Debug {
+				l = logger.Info
+			}
+
+			orm, err := db.NewDbOrm(*conf.Db.Dsn, l)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			if *conf.Db.Debug {
-				pg.Debug(true)
+			if err = orm.Migrate(); err != nil {
+				log.Fatal(err)
 			}
-
-			if *conf.Db.Migrate {
-				pg.Migrate()
-			}
-			defer pg.Db.Close()
+			log.Printf("migration did run successfully")
 
 			kc, err := kafka.NewKafkaConsumer(*conf.Kafka.Servers, *conf.Kafka.GroupId, topic.CONSUMER_TOPICS)
 			if err != nil {
@@ -61,8 +63,8 @@ func allCmd() *cobra.Command {
 			}
 
 			go kp.DeliveryReport()
-			go appKafka.StartKafkaServer(pg, kc, kp)
-			rest.StartRestServer(pg, kp, *conf.RestPort)
+			go appKafka.StartKafkaServer(orm, kc, kp)
+			rest.StartRestServer(orm, kp, *conf.RestPort)
 		},
 	}
 

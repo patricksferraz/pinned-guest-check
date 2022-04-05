@@ -17,6 +17,7 @@ import (
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
+	"gorm.io/gorm/logger"
 )
 
 // restCmd represents the rest command
@@ -33,19 +34,20 @@ func restCmd() *cobra.Command {
 		Short: "Run rest Service",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			pg, err := db.NewPostgreSQL(*conf.Db.DsnType, *conf.Db.Dsn)
+			l := logger.Error
+			if *conf.Db.Debug {
+				l = logger.Info
+			}
+
+			orm, err := db.NewDbOrm(*conf.Db.Dsn, l)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			if *conf.Db.Debug {
-				pg.Debug(true)
+			if err = orm.Migrate(); err != nil {
+				log.Fatal(err)
 			}
-
-			if *conf.Db.Migrate {
-				pg.Migrate()
-			}
-			defer pg.Db.Close()
+			log.Printf("migration did run successfully")
 
 			deliveryChan := make(chan ckafka.Event)
 			kp, err := kafka.NewKafkaProducer(*conf.Kafka.Servers, deliveryChan)
@@ -54,7 +56,7 @@ func restCmd() *cobra.Command {
 			}
 
 			go kp.DeliveryReport()
-			rest.StartRestServer(pg, kp, *conf.RestPort)
+			rest.StartRestServer(orm, kp, *conf.RestPort)
 		},
 	}
 

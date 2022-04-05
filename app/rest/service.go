@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/c-4u/pinned-guest-check/domain/service"
+	"github.com/c-4u/pinned-guest-check/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -32,15 +33,15 @@ func (t *RestService) CreateGuestCheck(c *fiber.Ctx) error {
 	var req CreateGuestCheckRequest
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	guestCheckID, err := t.Service.CreateGuestCheck(c.Context(), &req.Local, &req.GuestID, &req.PlaceID)
+	guestCheckID, err := t.Service.CreateGuestCheck(c.Context(), req.Local, req.GuestID, req.PlaceID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(IDResponse{ID: *guestCheckID})
+	return c.Status(fiber.StatusOK).JSON(IDResponse{ID: guestCheckID})
 }
 
 // FindGuestCheck godoc
@@ -59,13 +60,13 @@ func (t *RestService) FindGuestCheck(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheck, err := t.Service.FindGuestCheck(c.Context(), &guestCheckID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(guestCheck)
@@ -87,16 +88,16 @@ func (t *RestService) WaitPaymentGuestCheck(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.WaitPaymentGuestCheck(c.Context(), &guestCheckID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // CancelGuestCheck godoc
@@ -118,20 +119,20 @@ func (t *RestService) CancelGuestCheck(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	err := t.Service.CancelGuestCheck(c.Context(), &guestCheckID, &req.CanceledReason)
+	err := t.Service.CancelGuestCheck(c.Context(), &guestCheckID, req.CanceledReason)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // PayGuestCheck godoc
@@ -150,16 +151,16 @@ func (t *RestService) PayGuestCheck(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.PayGuestCheck(c.Context(), &guestCheckID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // AddGuestCheckItem godoc
@@ -181,20 +182,20 @@ func (t *RestService) AddGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	guestCheckItemID, err := t.Service.AddGuestCheckItem(c.Context(), &req.Name, &req.Code, &req.Quantity, &req.UnitPrice, &req.Discount, &req.Note, &req.Tags, &guestCheckID)
+	guestCheckItemID, err := t.Service.AddGuestCheckItem(c.Context(), &guestCheckID, req.Note, req.ItemCode, req.Quantity)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(IDResponse{ID: *guestCheckItemID})
+	return c.Status(fiber.StatusOK).JSON(IDResponse{ID: guestCheckItemID})
 }
 
 // FindGuestCheckItem godoc
@@ -214,20 +215,20 @@ func (t *RestService) FindGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItem, err := t.Service.FindGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(guestCheckItem)
@@ -253,27 +254,27 @@ func (t *RestService) CancelGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	err := t.Service.CancelGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID, &req.CanceledReason)
+	err := t.Service.CancelGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID, req.CanceledReason)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // PrepareGuestCheckItem godoc
@@ -293,23 +294,23 @@ func (t *RestService) PrepareGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.PrepareGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // ReadyGuestCheckItem godoc
@@ -329,23 +330,23 @@ func (t *RestService) ReadyGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.ReadyGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // ForwardGuestCheckItem godoc
@@ -365,23 +366,23 @@ func (t *RestService) ForwardGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.ForwardGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
 }
 
 // DeliverGuestCheckItem godoc
@@ -401,21 +402,52 @@ func (t *RestService) DeliverGuestCheckItem(c *fiber.Ctx) error {
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_id is not a valid uuid",
+			Msg: utils.PString("guest_check_id is not a valid uuid"),
 		})
 	}
 
 	guestCheckItemID := c.Params("guest_check_item_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
-			Msg: "guest_check_item_id is not a valid uuid",
+			Msg: utils.PString("guest_check_item_id is not a valid uuid"),
 		})
 	}
 
 	err := t.Service.DeliverGuestCheckItem(c.Context(), &guestCheckID, &guestCheckItemID)
 	if err != nil {
-		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: err.Error()})
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: "successful request"})
+	return c.Status(fiber.StatusOK).JSON(HTTPResponse{Msg: utils.PString("successful request")})
+}
+
+// SearchGuestChecks godoc
+// @Summary search guest checks
+// @ID searchGuestChecks
+// @Tags Guest Check
+// @Description Router for search guest checks
+// @Accept json
+// @Produce json
+// @Param page_size query int false "page size"
+// @Param page_token query string false "page token"
+// @Success 200 {object} SearchGuestChecksResponse
+// @Failure 400 {object} HTTPResponse
+// @Failure 403 {object} HTTPResponse
+// @Router /guest-checks [get]
+func (t *RestService) SearchGuestChecks(c *fiber.Ctx) error {
+	var req SearchGuestChecksRequest
+
+	if err := c.QueryParser(&req); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
+	}
+
+	guestChecks, nextPageToken, err := t.Service.SearchGuestChecks(c.Context(), req.PageToken, req.PageSize)
+	if err != nil {
+		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"guest_checks":    guestChecks,
+		"next_page_token": nextPageToken,
+	})
 }

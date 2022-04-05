@@ -2,20 +2,12 @@ basePath: /api/v1
 definitions:
   rest.AddGuestCheckItemRequest:
     properties:
-      code:
+      item_code:
         type: integer
-      discount:
-        type: number
-      name:
-        type: string
       note:
         type: string
       quantity:
         type: integer
-      tag:
-        type: string
-      unit_price:
-        type: number
     type: object
   rest.CancelGuestCheckItemRequest:
     properties:
@@ -105,6 +97,15 @@ definitions:
       id:
         type: string
     type: object
+  rest.SearchGuestChecksResponse:
+    properties:
+      guest_checks:
+        items:
+          $ref: '#/definitions/rest.GuestCheck'
+        type: array
+      next_page_token:
+        type: string
+    type: object
 info:
   contact:
     email: contato@coding4u.com.br
@@ -115,6 +116,38 @@ info:
   version: "1.0"
 paths:
   /guest-checks:
+    get:
+      consumes:
+      - application/json
+      description: Router for search guest checks
+      operationId: searchGuestChecks
+      parameters:
+      - description: page size
+        in: query
+        name: page_size
+        type: integer
+      - description: page token
+        in: query
+        name: page_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.SearchGuestChecksResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+      summary: search guest checks
+      tags:
+      - Guest Check
     post:
       consumes:
       - application/json

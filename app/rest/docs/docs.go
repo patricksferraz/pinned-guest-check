@@ -29,6 +29,54 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/guest-checks": {
+            "get": {
+                "description": "Router for search guest checks",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guest Check"
+                ],
+                "summary": "search guest checks",
+                "operationId": "searchGuestChecks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "page token",
+                        "name": "page_token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.SearchGuestChecksResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Router for create a new guest check",
                 "consumes": [
@@ -644,26 +692,14 @@ var doc = `{
         "rest.AddGuestCheckItemRequest": {
             "type": "object",
             "properties": {
-                "code": {
+                "item_code": {
                     "type": "integer"
-                },
-                "discount": {
-                    "type": "number"
-                },
-                "name": {
-                    "type": "string"
                 },
                 "note": {
                     "type": "string"
                 },
                 "quantity": {
                     "type": "integer"
-                },
-                "tag": {
-                    "type": "string"
-                },
-                "unit_price": {
-                    "type": "number"
                 }
             }
         },
@@ -798,6 +834,20 @@ var doc = `{
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.SearchGuestChecksResponse": {
+            "type": "object",
+            "properties": {
+                "guest_checks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/rest.GuestCheck"
+                    }
+                },
+                "next_page_token": {
                     "type": "string"
                 }
             }
