@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/asaskevich/govalidator"
@@ -12,22 +13,24 @@ import (
 
 func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
+	govalidator.SetNilPtrAllowedByRequired(true)
 }
 
 type GuestCheck struct {
-	Base           `json:",inline" valid:"-"`
-	TotalPrice     *float64          `json:"total_price,omitempty" gorm:"column:total_price" valid:"-"`
-	TotalDiscount  *float64          `json:"total_discount,omitempty" gorm:"column:total_discount" valid:"-"`
-	FinalPrice     *float64          `json:"final_price,omitempty" gorm:"column:final_price" valid:"-"`
-	Status         GuestCheckStatus  `json:"status" gorm:"column:status;not null" valid:"guestCheckStatus"`
-	CanceledReason *string           `json:"canceled_reason,omitempty" gorm:"column:canceled_reason;type:varchar(255)" valid:"-"`
-	Local          *string           `json:"local" gorm:"column:local;type:varchar(255)" valid:"required"`
+	Base           `json:",inline" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" valid:"-"`
+	TotalPrice     *float64          `json:"total_price,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:total_price" valid:"-"`
+	TotalDiscount  *float64          `json:"total_discount,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:total_discount" valid:"-"`
+	FinalPrice     *float64          `json:"final_price,omitempty" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" gorm:"column:final_price" valid:"-"`
+	Tip            *float64          `json:"tip,omitempty" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" gorm:"column:tip" valid:"-"`
+	Status         GuestCheckStatus  `json:"status" groups:"NEW_GUEST_CHECK" gorm:"column:status;not null" valid:"guestCheckStatus"`
+	CanceledReason *string           `json:"canceled_reason,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:canceled_reason;type:varchar(255)" valid:"-"`
+	Local          *string           `json:"local" groups:"NEW_GUEST_CHECK" gorm:"column:local;type:varchar(255)" valid:"required"`
 	Token          *string           `json:"-" gorm:"column:token;type:varchar(25);not null" valid:"-"`
-	GuestID        *string           `json:"guest_id" gorm:"column:guest_id;type:uuid;not null" valid:"uuid"`
+	GuestID        *string           `json:"guest_id" groups:"NEW_GUEST_CHECK" gorm:"column:guest_id;type:uuid;not null" valid:"uuid"`
 	Guest          *Guest            `json:"-" valid:"-"`
-	PlaceID        *string           `json:"place_id" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
+	PlaceID        *string           `json:"place_id" groups:"NEW_GUEST_CHECK" gorm:"column:place_id;type:uuid;not null" valid:"uuid"`
 	Place          *Place            `json:"-" valid:"-"`
-	AttendedBy     *string           `json:"attended_by,omitempty" gorm:"column:attended_by;type:uuid" valid:"uuid,optional"`
+	AttendedBy     *string           `json:"attended_by,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:attended_by;type:uuid" valid:"uuid,optional"`
 	Attendant      *Employee         `json:"-" gorm:"foreignKey:AttendedBy" valid:"-"`
 	Items          []*GuestCheckItem `json:"-" gorm:"ForeignKey:GuestCheckID" valid:"-"`
 	items          []*GuestCheckItem `json:"-" gorm:"-" valid:"-"`
@@ -121,11 +124,12 @@ func (e *GuestCheck) Cancel(canceledReason *string) error {
 	return err
 }
 
-func (e *GuestCheck) Pay() error {
+func (e *GuestCheck) Pay(tip *float64) error {
 	if e.Status == GUEST_CHECK_CANCELED {
 		return errors.New("the canceled guest check cannot be paid")
 	}
 
+	e.Tip = tip
 	e.Status = GUEST_CHECK_PAID
 	e.UpdatedAt = utils.PTime(time.Now())
 	err := e.IsValid()
@@ -134,7 +138,7 @@ func (e *GuestCheck) Pay() error {
 
 func (e *GuestCheck) AddItem(guestCheckItem *GuestCheckItem) error {
 	if e.Status != GUEST_CHECK_OPENED {
-		return errors.New("the guest check cannot be changed")
+		return errors.New(fmt.Sprintf("the %s guest check cannot be changed", e.Status))
 	}
 
 	// NOTE: change if multi guest check items are added

@@ -143,11 +143,14 @@ func (t *RestService) CancelGuestCheck(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param guest_check_id path string true "Guest check ID"
+// @Param body body PayGuestCheckRequest true "JSON body for pay a guest check"
 // @Success 200 {object} HTTPResponse
 // @Failure 400 {object} HTTPResponse
 // @Failure 403 {object} HTTPResponse
 // @Router /guest-checks/{guest_check_id}/pay [post]
 func (t *RestService) PayGuestCheck(c *fiber.Ctx) error {
+	var req PayGuestCheckRequest
+
 	guestCheckID := c.Params("guest_check_id")
 	if !govalidator.IsUUIDv4(guestCheckID) {
 		return c.Status(fiber.StatusBadRequest).JSON(HTTPResponse{
@@ -155,7 +158,11 @@ func (t *RestService) PayGuestCheck(c *fiber.Ctx) error {
 		})
 	}
 
-	err := t.Service.PayGuestCheck(c.Context(), &guestCheckID)
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
+	}
+
+	err := t.Service.PayGuestCheck(c.Context(), &guestCheckID, req.Tip)
 	if err != nil {
 		return c.Status(fiber.StatusForbidden).JSON(HTTPResponse{Msg: utils.PString(err.Error())})
 	}

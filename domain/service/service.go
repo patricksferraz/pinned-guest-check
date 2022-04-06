@@ -89,7 +89,7 @@ func (s *Service) CreateGuestCheck(ctx context.Context, local, guestID, placeID 
 		return nil, err
 	}
 
-	eMsg, err := event.ToJson()
+	eMsg, err := event.ToJson(topic.NEW_GUEST_CHECK)
 	if err != nil {
 		return nil, err
 	}
@@ -169,17 +169,33 @@ func (s *Service) OpenGuestCheck(ctx context.Context, guestCheckID, employeeID *
 	return nil
 }
 
-func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string) error {
+func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string, tip *float64) error {
 	guestCheck, err := s.Repo.FindGuestCheck(ctx, guestCheckID)
 	if err != nil {
 		return err
 	}
 
-	if err := guestCheck.Pay(); err != nil {
+	if err := guestCheck.Pay(tip); err != nil {
 		return err
 	}
 
 	if err = s.Repo.SaveGuestCheck(ctx, guestCheck); err != nil {
+		return err
+	}
+
+	// TODO: adds retry
+	event, err := entity.NewEvent(guestCheck)
+	if err != nil {
+		return err
+	}
+
+	eMsg, err := event.ToJson(topic.PAY_GUEST_CHECK)
+	if err != nil {
+		return err
+	}
+
+	err = s.Repo.PublishEvent(ctx, utils.PString(topic.PAY_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
+	if err != nil {
 		return err
 	}
 

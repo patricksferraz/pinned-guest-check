@@ -85,3 +85,7 @@ type SearchGuestChecksResponse struct {
 	GuestChecks   []*GuestCheck `json:"guest_checks"`
 	NextPageToken *string       `json:"next_page_token"`
 }
+
+type PayGuestCheckRequest struct {
+	Tip *float64 `json:"tip"`
+}

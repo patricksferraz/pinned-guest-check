@@ -618,6 +618,15 @@ var doc = `{
                         "name": "guest_check_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "JSON body for pay a guest check",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.PayGuestCheckRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -835,6 +844,14 @@ var doc = `{
             "properties": {
                 "id": {
                     "type": "string"
+                }
+            }
+        },
+        "rest.PayGuestCheckRequest": {
+            "type": "object",
+            "properties": {
+                "tip": {
+                    "type": "number"
                 }
             }
         },

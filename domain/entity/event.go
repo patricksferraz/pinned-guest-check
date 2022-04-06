@@ -6,6 +6,7 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/c-4u/pinned-guest-check/utils"
+	"github.com/liip/sheriff"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -18,8 +19,8 @@ type Message interface {
 }
 
 type Event struct {
-	Base `json:",inline" valid:"required"`
-	Msg  Message `json:"msg" valid:"required"`
+	Base `json:",inline" groups:"ever" valid:"required"`
+	Msg  Message `json:"msg" groups:"ever" valid:"required"`
 }
 
 func NewEvent(msg Message) (*Event, error) {
@@ -41,16 +42,20 @@ func (e *Event) IsValid() error {
 	return err
 }
 
-func (e *Event) ToJson() ([]byte, error) {
+func (e *Event) ToJson(groups ...string) ([]byte, error) {
 	err := e.IsValid()
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := json.Marshal(e)
+	data, err := sheriff.Marshal(
+		&sheriff.Options{
+			Groups: append(groups, "ever"),
+			// ApiVersion: version,
+		}, e)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
-	return result, nil
+	return json.Marshal(data)
 }

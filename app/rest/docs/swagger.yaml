@@ -97,6 +97,11 @@ definitions:
       id:
         type: string
     type: object
+  rest.PayGuestCheckRequest:
+    properties:
+      tip:
+        type: number
+    type: object
   rest.SearchGuestChecksResponse:
     properties:
       guest_checks:
@@ -508,6 +513,12 @@ paths:
         name: guest_check_id
         required: true
         type: string
+      - description: JSON body for pay a guest check
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.PayGuestCheckRequest'
       produces:
       - application/json
       responses:

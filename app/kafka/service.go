@@ -104,7 +104,7 @@ func (p *KafkaProcessor) openGuestCheck(msg *ckafka.Message) error {
 		return err
 	}
 
-	err = p.Service.OpenGuestCheck(context.TODO(), e.Msg.GuestCheckID, e.Msg.EmployeeID)
+	err = p.Service.OpenGuestCheck(context.TODO(), e.Msg.ID, e.Msg.AttendedBy)
 	if err != nil {
 		return err
 	}
