@@ -183,22 +183,6 @@ func (s *Service) PayGuestCheck(ctx context.Context, guestCheckID *string, tip *
 		return err
 	}
 
-	// TODO: adds retry
-	event, err := entity.NewEvent(guestCheck)
-	if err != nil {
-		return err
-	}
-
-	eMsg, err := event.ToJson(topic.PAY_GUEST_CHECK)
-	if err != nil {
-		return err
-	}
-
-	err = s.Repo.PublishEvent(ctx, utils.PString(topic.PAY_GUEST_CHECK), utils.PString(string(eMsg)), guestCheck.ID)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

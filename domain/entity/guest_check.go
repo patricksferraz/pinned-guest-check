@@ -17,11 +17,11 @@ func init() {
 }
 
 type GuestCheck struct {
-	Base           `json:",inline" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" valid:"-"`
+	Base           `json:",inline" groups:"NEW_GUEST_CHECK" valid:"-"`
 	TotalPrice     *float64          `json:"total_price,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:total_price" valid:"-"`
 	TotalDiscount  *float64          `json:"total_discount,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:total_discount" valid:"-"`
-	FinalPrice     *float64          `json:"final_price,omitempty" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" gorm:"column:final_price" valid:"-"`
-	Tip            *float64          `json:"tip,omitempty" groups:"NEW_GUEST_CHECK,PAY_GUEST_CHECK" gorm:"column:tip" valid:"-"`
+	FinalPrice     *float64          `json:"final_price,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:final_price" valid:"-"`
+	Tip            *float64          `json:"tip,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:tip" valid:"-"`
 	Status         GuestCheckStatus  `json:"status" groups:"NEW_GUEST_CHECK" gorm:"column:status;not null" valid:"guestCheckStatus"`
 	CanceledReason *string           `json:"canceled_reason,omitempty" groups:"NEW_GUEST_CHECK" gorm:"column:canceled_reason;type:varchar(255)" valid:"-"`
 	Local          *string           `json:"local" groups:"NEW_GUEST_CHECK" gorm:"column:local;type:varchar(255)" valid:"required"`

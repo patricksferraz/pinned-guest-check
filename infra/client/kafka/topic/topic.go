@@ -3,7 +3,6 @@ package topic
 const (
 	NEW_GUEST_CHECK  string = "NEW_GUEST_CHECK"
 	OPEN_GUEST_CHECK string = "OPEN_GUEST_CHECK"
-	PAY_GUEST_CHECK  string = "PAY_GUEST_CHECK"
 
 	NEW_GUEST        string = "NEW_GUEST"
 	NEW_PLACE        string = "NEW_PLACE"
