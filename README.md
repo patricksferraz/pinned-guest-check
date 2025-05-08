@@ -19,175 +19,187 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-<!-- PROJECT LOGO -->
-<br />
+<!-- PROJECT LOGO & TITLE -->
 <p align="center">
-  <a href="https://github.com/c-4u/pinned-guest-check">
-    <img src="img/logo.png" alt="Logo" width="100" height="100">
-  </a>
-
-  <h3 align="center">Guest Check</h3>
-
+  <h1 align="center">Guest Check</h1>
   <p align="center">
-    Microservice for time recording
+    <b>Modern microservice for guest check and time recording, built with Go, REST, gRPC, Kafka, and Kubernetes.</b><br>
+    <i>Fast, scalable, and cloud-native solution for hospitality and retail environments.</i>
     <br />
-    <a href="https://github.com/c-4u/pinned-guest-check"><strong>Explore the docs »</strong></a>
-    <!-- <br />
-    <br />
-    <a href="https://github.com/c-4u/pinned-guest-check">View Demo</a>
+    <a href="#getting-started"><strong>Get Started »</strong></a>
     ·
-    <a href="https://github.com/c-4u/pinned-guest-check">Report Bug</a>
+    <a href="https://github.com/patricksferraz/pinned-guest-check/issues">Report Bug</a>
     ·
-    <a href="https://github.com/c-4u/pinned-guest-check">Request Feature</a>-->
+    <a href="https://github.com/patricksferraz/pinned-guest-check/issues">Request Feature</a>
   </p>
 </p>
 
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <!-- <li><a href="#usage">Usage</a></li> -->
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#contact">Contact</a></li>
-    <!-- <li><a href="#acknowledgements">Acknowledgements</a></li> -->
-  </ol>
-</details>
+---
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+<!-- BADGES -->
+<p align="center">
+  <img alt="Go version" src="https://img.shields.io/badge/Go-1.18+-00ADD8?logo=go">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-ready-blue?logo=docker">
+  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-ready-326ce5?logo=kubernetes">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+  <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square">
+</p>
 
-Guest check is a microservice for pinned soluction providing in the application layer the communication by REST and gRPC.
+---
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-<!--
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo_name`, `twitter_handle`, `email`, `project_title`, `project_description` -->
+## 🚀 About the Project
 
-### Built With
+**Guest Check** is a cloud-native microservice designed for fast, reliable, and scalable guest check and time recording operations. It provides a robust API for managing guest checks, items, and payments, supporting both REST and gRPC protocols, and integrates seamlessly with Kafka for event-driven architectures.
 
-- [Go Lang](https://golang.org/)
-- List all: `go list -m all`
+- **Use case:** Ideal for restaurants, hotels, and retail environments needing modern, distributed guest check management.
+- **Why Guest Check?**
+  - Cloud-native, scalable, and production-ready
+  - Built with Go for performance and reliability
+  - Easy integration via REST, gRPC, and Kafka
+  - Ready for Docker and Kubernetes deployments
 
-<!-- GETTING STARTED -->
-## Getting Started
+---
 
-To get a local copy up and running follow these simple steps.
+## 🧩 Features
+
+- Full CRUD for guest checks and items
+- RESTful API and gRPC support
+- Event-driven with Kafka (consume and produce)
+- PostgreSQL and MongoDB support via GORM
+- OpenAPI/Swagger documentation
+- Cloud-native: Docker & Kubernetes ready
+- Secure: API key authentication
+- Extensible and easy to contribute
+
+---
+
+## 🏗️ Architecture & Tech Stack
+
+- **Language:** Go (Golang)
+- **Frameworks:** Fiber (REST), Cobra (CLI), GORM (ORM)
+- **Messaging:** Kafka (Confluent)
+- **API:** REST (Fiber), gRPC
+- **Database:** PostgreSQL, MongoDB
+- **Containerization:** Docker, Docker Compose
+- **Orchestration:** Kubernetes (k8s)
+- **Docs:** Swagger/OpenAPI
+
+---
+
+## ⚡ Quickstart
 
 ### Prerequisites
+- Go 1.18+
+- Docker & Docker Compose
+- Kubernetes cluster (local or cloud)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [Helm](https://helm.sh/) (optional)
 
-- Hiring a kubernetes cluster:
-  - [AWS](https://aws.amazon.com/pt/eks/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc&eks-blogs.sort-by=item.additionalFields.createdDate&eks-blogs.sort-order=desc)
-  - [Azure](https://azure.microsoft.com/pt-br/services/kubernetes-service/)
-  - [GCP](https://cloud.google.com/kubernetes-engine)
+### Local Development (Docker Compose)
+```sh
+# Clone the repository
+$ git clone https://github.com/patricksferraz/pinned-guest-check.git
+$ cd pinned-guest-check
 
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+# Copy and edit environment variables
+$ cp .env.example .env
 
-- Create a secrets: see "_k8s/instructions.md_"
+# Start all services
+$ make up
 
-### Deploy
+# Run tests
+$ make gtest
+```
 
-- `kubectl apply -f ./k8s`
+### Kubernetes Deployment
+1. Fill in `k8s/.env` using `k8s/.env.example`.
+2. Create secrets:
+   ```sh
+   kubectl create secret generic guest-check-secret --from-env-file k8s/.env
+   ```
+3. (Optional) Create Docker registry secret:
+   ```sh
+   kubectl create secret docker-registry regsecret \
+     --docker-server=$DOCKER_REGISTRY_SERVER \
+     --docker-username=$DOCKER_USER \
+     --docker-password=$DOCKER_PASSWORD \
+     --docker-email=$DOCKER_EMAIL
+   ```
+4. Deploy all resources:
+   ```sh
+   kubectl apply -f ./k8s
+   ```
 
-<!-- USAGE EXAMPLES -->
-<!-- ## Usage
+---
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+## 📚 API Overview
 
-_For more examples, please refer to the [Documentation](https://example.com)_ -->
+### REST Endpoints (Base: `/api/v1`)
+- `POST   /guest-checks` — Create a new guest check
+- `GET    /guest-checks` — List/search guest checks
+- `GET    /guest-checks/{guest_check_id}` — Get guest check by ID
+- `POST   /guest-checks/{guest_check_id}/wait-payment` — Mark as waiting payment
+- `POST   /guest-checks/{guest_check_id}/cancel` — Cancel guest check
+- `POST   /guest-checks/{guest_check_id}/pay` — Pay guest check
+- `POST   /guest-checks/{guest_check_id}/items` — Add item to guest check
+- `GET    /guest-checks/{guest_check_id}/items/{item_id}` — Get item details
+- `POST   /guest-checks/{guest_check_id}/items/{item_id}/cancel` — Cancel item
+- `POST   /guest-checks/{guest_check_id}/items/{item_id}/prepare` — Mark item as preparing
+- `POST   /guest-checks/{guest_check_id}/items/{item_id}/ready` — Mark item as ready
+- `POST   /guest-checks/{guest_check_id}/items/{item_id}/forward` — Forward item
+- `POST   /guest-checks/{guest_check_id}/items/{item_id}/deliver` — Deliver item
 
-<!-- ROADMAP -->
-## Roadmap
+> Full Swagger docs available at `/api/v1/swagger/index.html`
 
-See the [open issues](https://github.com/c-4u/pinned-guest-check/issues) for a list of proposed features (and known issues).
+### Kafka Topics Consumed
+- `OPEN_GUEST_CHECK` — Open a new guest check
+- `NEW_GUEST` — Register a new guest
+- `NEW_PLACE` — Register a new place
+- `NEW_EMPLOYEE` — Register a new employee
+- `NEW_MENU_ITEM` — Register a new menu item
+- `UPDATE_MENU_ITEM` — Update menu item
 
-<!-- CONTRIBUTING -->
-## Contributing
+---
 
-Any contributions you make are **greatly appreciated**.
+## 🛠️ Built With
+- [Go](https://golang.org/)
+- [Fiber](https://gofiber.io/)
+- [Cobra](https://github.com/spf13/cobra)
+- [GORM](https://gorm.io/)
+- [Kafka](https://kafka.apache.org/)
+- [Docker](https://www.docker.com/)
+- [Kubernetes](https://kubernetes.io/)
+- [Swagger](https://swagger.io/)
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+---
+
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-**Prerequisites**:
+---
 
-- Golang
+## 📬 Contact & Community
 
-  ```sh
-  wget https://golang.org/dl/go1.17.7.linux-amd64.tar.gz
-  rm -rf /usr/local/go && tar -C /usr/local -xzf go1.17.7.linux-amd64.tar.gz
-  export PATH=$PATH:/usr/local/go/bin
-  ```
+- Project Link: [https://github.com/patricksferraz/pinned-guest-check](https://github.com/patricksferraz/pinned-guest-check)
 
-- Docker and docker-compose
+---
 
-  ```sh
-  sudo apt-get install docker docker-compose docker.io -y
-  ```
+## 🏷️ SEO & Keywords
 
-- Environment: see "_.env.example_"
+<sub>
+Guest check, time recording, microservice, Go, Golang, REST API, gRPC, Kafka, Kubernetes, Docker, hospitality, retail, open source, cloud-native, scalable, event-driven, POS, restaurant, hotel, guest management, order management, payment, API, backend, distributed systems, openapi, swagger, fiber, gorm, cobra, postgres, mongodb, devops, CI/CD, modern architecture, best practices.
+</sub>
 
-**Installation**:
+---
 
-1. Clone the repo
-
-   ```sh
-   git clone https://github.com/c-4u/pinned-guest-check.git
-   ```
-
-2. Run
-
-   ```sh
-   make up
-   ```
-
-3. Test
-
-   ```sh
-   make gtest
-   ```
-
-**Installation in local kubernetes**:
-
-1. Install [k3d](https://k3d.io/), [Kind](https://kind.sigs.k8s.io/) or similar
-2. Install [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [Helm](https://helm.sh/)
-3. Follow the steps of [Getting Started](#getting-started)
-    - Connect to cluster and run:
-
-      `kubectl apply -f k8s/`
-<!-- LICENSE -->
-<!-- ## License -->
-
-<!-- Distributed under the MIT License. See `LICENSE` for more information. -->
-
-<!-- CONTACT -->
-## Contact
-
-Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
-
-Project Link: [pinned-guest-check](https://github.com/c-4u/pinned-guest-check)
-
-<!-- ACKNOWLEDGEMENTS -->
-<!-- ## Acknowledgements
-
-* []()
-* []()
-* []() -->
+<details>
+<summary>Meta Description (for search engines)</summary>
+Guest Check is a modern, cloud-native microservice for guest check and time recording, built with Go, REST, gRPC, Kafka, and Kubernetes. Fast, scalable, and ready for hospitality and retail environments. Open source and easy to integrate.
+</details>

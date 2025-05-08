@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/c-4u/pinned-guest-check/utils"
+	"github.com/patricksferraz/pinned-guest-check/utils"
 	uuid "github.com/satori/go.uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

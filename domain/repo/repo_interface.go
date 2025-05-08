@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 
-	"github.com/c-4u/pinned-guest-check/domain/entity"
+	"github.com/patricksferraz/pinned-guest-check/domain/entity"
 )
 
 type RepoInterface interface {

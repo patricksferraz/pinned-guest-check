@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/c-4u/pinned-guest-check/utils"
 	"github.com/lib/pq"
+	"github.com/patricksferraz/pinned-guest-check/utils"
 	uuid "github.com/satori/go.uuid"
 )
 
